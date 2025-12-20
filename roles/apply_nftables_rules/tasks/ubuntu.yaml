@@ -1,0 +1,12 @@
+---
+- name: Copy nftables.conf
+  ansible.builtin.copy:
+    src: "nftables.conf/{{ ansible_hostname }}"
+    dest: /etc/nftables.conf
+    owner: root
+    group: root
+    mode: "0644"
+    force: true
+    validate: nft --check -f %s
+  notify: NftablesRestart
+...

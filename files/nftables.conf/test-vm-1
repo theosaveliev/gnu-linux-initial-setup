@@ -1,0 +1,39 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table inet nat {
+	chain prerouting {
+		type nat hook prerouting priority dstnat; policy accept;
+	}
+
+	chain postrouting {
+		type nat hook postrouting priority srcnat; policy accept;
+		# oifname "enp0s6" ip saddr 172.16.145.0/25 counter masquerade
+		counter comment "packets reached the end of the chain"
+	}
+}
+
+table inet filter {
+	chain input {
+		type filter hook input priority filter; policy drop;
+		ct state established,related counter accept
+		iifname "lo" counter accept
+		ct state new tcp dport 2200 meter ssh_rate { ip saddr limit rate 5/minute burst 10 packets } counter accept
+		ct state new tcp dport 2200 counter log prefix "ssh-rate-limit: " drop
+		ip protocol icmp limit rate 100/second counter accept
+		counter comment "packets reached the end of the chain"
+	}
+
+	chain forward {
+		type filter hook forward priority filter; policy drop;
+        ct state established,related counter accept
+		# ip saddr 172.16.145.0/25 counter accept
+		# ip daddr 172.16.145.0/25 counter accept
+		counter comment "packets reached the end of the chain"
+	}
+
+    chain output {
+        type filter hook output priority filter; policy accept;
+    }
+}

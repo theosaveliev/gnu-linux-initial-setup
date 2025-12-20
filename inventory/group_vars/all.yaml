@@ -1,0 +1,21 @@
+---
+ansible_user: ubuntu
+ansible_port: 2200
+
+# linux-system-roles.journald
+journald_persistent: true
+journald_max_disk_size: 2048
+journald_per_user: true
+journald_sync_interval: 1
+journald_keep_free: 10240
+
+# devsec.hardening.ssh_hardening
+ssh_server_ports: ["2200"]
+ssh_permit_tunnel: "yes"
+ssh_allow_tcp_forwarding: "yes"
+sftp_enabled: true
+
+# devsec.hardening.os_hardening
+sysctl_overwrite:
+  net.ipv4.ip_forward: 1
+...

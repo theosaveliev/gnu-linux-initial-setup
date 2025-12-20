@@ -1,0 +1,9 @@
+---
+- name: Install the edge kernel
+  ansible.builtin.apt:
+    name: linux-image-generic-hwe-*-edge
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  notify: [SystemReboot]
+...
