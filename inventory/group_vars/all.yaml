@@ -11,11 +11,11 @@ journald_keep_free: 10240
 
 # devsec.hardening.ssh_hardening
 ssh_server_ports: ["2200"]
-ssh_permit_tunnel: "yes"
-ssh_allow_tcp_forwarding: "yes"
-sftp_enabled: true
+ssh_permit_tunnel: "no"
+ssh_allow_tcp_forwarding: "no"
+sftp_enabled: false
 
 # devsec.hardening.os_hardening
 sysctl_overwrite:
-  net.ipv4.ip_forward: 1
+  net.ipv4.ip_forward: 0
 ...

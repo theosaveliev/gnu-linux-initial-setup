@@ -12,6 +12,4 @@
     - { role: linux-system-roles.journald, tags: journald }
     - { role: devsec.hardening.ssh_hardening, tags: ssh_hardening }
     - { role: devsec.hardening.os_hardening, tags: os_hardening }
-    - { role: schedule_stressng, tags: schedule_stressng }
-    - { role: install_ollama, tags: install_ollama }
 ...

@@ -2,7 +2,7 @@
 
 Baseline script for Internet-facing hosts.
 
-Tested OS: Ubuntu 24.04 LTS
+Tested OS: Ubuntu 22.04 LTS, 24.04 LTS
 
 
 #### Collections
@@ -19,8 +19,8 @@ Tested OS: Ubuntu 24.04 LTS
 % ansible-playbook playbook.yaml \
     -i inventory/hosts.yaml \
     --private-key ~/.ssh/id_ed25519 \
-    -e "target_hosts=utm" \
-    -t install_ollama
+    -e "target_hosts=test-vm-1" \
+    -t apply_nftables_rules 
 ```
 
 
