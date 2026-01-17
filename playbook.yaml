@@ -4,6 +4,7 @@
   become: true
   gather_facts: true
   roles:
+    - { role: disable_apt_timers, tags: disable_apt_timers }
     - { role: apt_upgrade, tags: apt_upgrade }
     - { role: install_edge_kernel, tags: install_edge_kernel }
     - { role: install_nftables, tags: install_nftables }
