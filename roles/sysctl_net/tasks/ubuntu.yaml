@@ -2,7 +2,7 @@
 - name: Set max socket size
   ansible.posix.sysctl:
     name: "{{ item }}"
-    value: 16777216
+    value: "16777216"
     state: present
     sysctl_set: true
     reload: true

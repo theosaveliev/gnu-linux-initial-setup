@@ -1,7 +1,7 @@
 ---
 - name: Copy nftables.conf
   ansible.builtin.copy:
-    src: "nftables.conf/{{ ansible_hostname }}"
+    src: "nftables.conf/{{ ansible_facts['hostname'] }}"
     dest: /etc/nftables.conf
     owner: root
     group: root
