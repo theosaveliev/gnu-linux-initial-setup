@@ -22,7 +22,11 @@ table inet firewall {
         ct state established,related counter accept
 		ct state invalid counter drop
 		# docker
-        iifname enp0s1 ip daddr 172.17.0.0/12 ct original proto-dst 80 counter accept
+		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 80 meter docker_http_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 80 counter log prefix "docker-http-rate-limit: " drop
+		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 meter docker_https_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 counter log prefix "docker-https-rate-limit: " drop
+
 		counter comment "packets reached the end of the chain"
 	}
 }
