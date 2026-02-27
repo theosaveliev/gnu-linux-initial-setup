@@ -1,0 +1,12 @@
+---
+- name: Copy daemon conf
+  ansible.builtin.copy:
+    src: docker/daemon.json
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+    force: true
+    validate: dockerd --validate --config-file %s
+  notify: DockerRestart
+...

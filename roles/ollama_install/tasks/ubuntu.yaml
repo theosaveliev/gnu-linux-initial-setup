@@ -1,0 +1,43 @@
+---
+- name: Install dependencies
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - coreutils
+      - findutils
+      - curl
+      - gawk
+      - grep
+      - sed
+
+- name: Download Ollama installer
+  ansible.builtin.get_url:
+    url: https://ollama.com/install.sh
+    dest: "{{ ansible_facts['user_dir'] }}/install_ollama.sh"
+    mode: "0755"
+
+- name: Run Ollama installer
+  ansible.builtin.shell: "{{ ansible_facts['user_dir'] }}/install_ollama.sh"
+  args:
+    executable: /usr/bin/sh
+  register: ollama_install_result
+  changed_when: "'Install complete.' in ollama_install_result.stdout"
+
+- name: Enable and unmask Ollama
+  ansible.builtin.systemd_service:
+    name: ollama.service
+    state: started
+    enabled: true
+    masked: false
+    daemon_reload: true
+
+- name: Add user to ollama group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: ollama
+    append: true
+    state: present
+    force: false
+...

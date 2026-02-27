@@ -19,8 +19,8 @@ Tested OS: Ubuntu 22.04 LTS, 24.04 LTS
 % ansible-playbook playbook.yaml \
     -i inventory/hosts.yaml \
     --private-key ~/.ssh/id_ed25519 \
-    -e "target_hosts=test-vm-1" \
-    -t apply_nftables_rules 
+    -e "target_hosts=local-vm" \
+    -t nft_apply_rules 
 ```
 
 

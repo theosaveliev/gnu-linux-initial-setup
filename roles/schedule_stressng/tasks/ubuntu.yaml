@@ -1,0 +1,26 @@
+---
+- name: Install cron and stressng
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - cron
+      - stress-ng
+
+- name: Enable and unmask cron
+  ansible.builtin.systemd_service:
+    name: cron.service
+    state: started
+    enabled: true
+    masked: false
+    daemon_reload: true
+
+- name: Add cron job
+  ansible.builtin.cron:
+    name: Check instance stability
+    minute: "0"
+    user: "{{ ansible_user }}"
+    job: "stress-ng --cpu 2 --cpu-load 50 --timeout 3600 --quiet"
+    state: present
+...

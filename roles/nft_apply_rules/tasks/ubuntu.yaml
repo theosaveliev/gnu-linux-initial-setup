@@ -1,4 +1,7 @@
 ---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
 - name: Copy nftables.conf
   ansible.builtin.copy:
     src: "nftables.conf/{{ ansible_facts['hostname'] }}"
@@ -8,5 +11,7 @@
     mode: "0644"
     force: true
     validate: nft --check -f %s
-  notify: NftablesRestart
+  notify:
+    - NftablesRestart
+    - DockerRestartIfRunning
 ...

@@ -1,0 +1,28 @@
+#!/usr/sbin/nft -f
+
+table inet firewall
+delete table inet firewall
+
+table inet firewall {
+	chain input {
+		type filter hook input priority filter; policy drop;
+		ct state established,related counter accept
+		ct state invalid counter drop
+		iifname "lo" counter accept
+		ip protocol icmp icmp type echo-request limit rate 100/second counter accept
+		ip6 nexthdr icmpv6 icmpv6 type { echo-request, nd-router-advert, nd-router-solicit, nd-neighbor-advert, nd-neighbor-solicit } limit rate 100/second counter accept
+		# ssh
+		ct state new tcp dport 2200 meter ssh_rate { ip saddr limit rate 5/minute burst 10 packets } counter accept
+		ct state new tcp dport 2200 counter log prefix "ssh-rate-limit: " drop
+		counter comment "packets reached the end of the chain"
+	}
+
+	chain forward {
+		type filter hook forward priority filter; policy drop;
+        ct state established,related counter accept
+		ct state invalid counter drop
+		# docker
+        iifname enp0s1 ip daddr 172.17.0.0/12 ct original proto-dst 80 counter accept
+		counter comment "packets reached the end of the chain"
+	}
+}

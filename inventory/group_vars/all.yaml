@@ -17,5 +17,5 @@ sftp_enabled: false
 
 # devsec.hardening.os_hardening
 sysctl_overwrite:
-  net.ipv4.ip_forward: 0
+  net.ipv4.ip_forward: 1
 ...

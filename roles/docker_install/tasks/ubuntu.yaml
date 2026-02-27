@@ -1,0 +1,86 @@
+---
+- name: Uninstall unofficial packages
+  ansible.builtin.apt:
+    state: absent
+    name:
+      - docker.io
+      - docker-compose
+      - docker-compose-v2
+      - docker-doc
+      - podman-docker
+      - containerd
+      - runc
+
+- name: Install ca-certificates curl
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - ca-certificates
+      - curl
+
+- name: Ensure apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Download docker apt public key
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+    owner: root
+    group: root
+    validate_certs: true
+    decompress: false
+    force: false
+    backup: false
+
+- name: Add docker apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
+    state: present
+    filename: docker
+    mode: "0644"
+    validate_certs: true
+    update_cache: true
+
+- name: Install docker
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+- name: Enable and unmask docker
+  ansible.builtin.systemd_service:
+    name: docker.service
+    state: started
+    enabled: true
+    masked: false
+    daemon_reload: true
+
+- name: Ensure docker group exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+    system: true
+    force: false
+
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
+    state: present
+    force: false
+...
