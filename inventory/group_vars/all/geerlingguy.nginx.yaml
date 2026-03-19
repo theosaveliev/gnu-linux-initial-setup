@@ -44,57 +44,20 @@ nginx_server_names_hash_bucket_size: "64"
 nginx_proxy_cache_path: ""
 
 nginx_extra_conf_options: ""
-# Example extra main options, used within the main nginx's context:
-#   nginx_extra_conf_options: |
-#     env VARIABLE;
-#     include /etc/nginx/main.d/*.conf;
 
 nginx_extra_http_options: |
   ssl_protocols TLSv1.3;
   ssl_ecdh_curve X25519:prime256v1:secp384r1;
   ssl_prefer_server_ciphers off;
-# Example extra http options, printed inside the main server http config:
-#    nginx_extra_http_options: |
-#      proxy_buffering    off;
-#      proxy_set_header   X-Real-IP $remote_addr;
-#      proxy_set_header   X-Scheme $scheme;
-#      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-#      proxy_set_header   Host $http_host;
 
 nginx_remove_default_vhost: true
 
 # Listen on IPv6 (default: true)
 nginx_listen_ipv6: false
 
-nginx_vhosts:
-  # - listen: "80 default_server"
-  #   server_name: "_"
-  #   root: "/var/www/site.local"
-  #   filename: "nginx.test"
-  #   state: "absent"
+# nginx_vhosts: []
 
-  - listen: "80 default_server"
-    server_name: "_"
-    filename: "https.redirect.conf"
-    return: "301 https://$host$request_uri"
-
-  - listen: "443 ssl http2 default_server"
-    server_name: "site.local"
-    root: "/var/www/site.local"
-    filename: "site.local.conf"
-    extra_parameters: |
-      ssl_certificate     /etc/letsencrypt/live/site.local/fullchain.pem;
-      ssl_certificate_key /etc/letsencrypt/live/site.local/privkey.pem;
-
-
-nginx_upstreams: []
-# - name: myapp1
-#   strategy: "ip_hash" # "least_conn", etc.
-#   keepalive: 16 # optional
-#   servers:
-#     - "srv1.example.com"
-#     - "srv2.example.com weight=3"
-#     - "srv3.example.com"
+# nginx_upstreams: []
 
 nginx_log_format: |-
   '$remote_addr - $remote_user [$time_local] "$request" '

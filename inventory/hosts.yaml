@@ -3,4 +3,5 @@ all:
   hosts:
     local-vm:
       ansible_host: 192.168.64.17
+      webroot_domain: "site.local"
 ...

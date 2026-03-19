@@ -1,0 +1,36 @@
+---
+# Certbot auto-renew cron job configuration (for certificate renewals).
+certbot_auto_renew: true
+certbot_auto_renew_user: root
+certbot_auto_renew_hour: "3"
+certbot_auto_renew_minute: "00"
+certbot_auto_renew_options: "--quiet"
+
+certbot_testmode: false
+certbot_hsts: true
+
+# Parameters used when creating new Certbot certs.
+certbot_create_if_missing: true
+certbot_create_method: webroot
+certbot_create_extra_args: ""
+certbot_admin_email: user@example.con
+certbot_expand: false
+
+# Default webroot, overwritten by individual per-cert webroot directories
+certbot_webroot: /var/www/letsencrypt
+
+# certbot_certs: []
+
+certbot_create_standalone_stop_services: []
+
+# Available options: 'package', 'snap', 'source'.
+certbot_install_method: 'snap'
+
+# Source install configuration.
+certbot_repo: https://github.com/certbot/certbot.git
+certbot_version: master
+certbot_keep_updated: true
+
+# Where to put Certbot when installing from source.
+certbot_dir: /opt/certbot
+...

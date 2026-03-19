@@ -1,0 +1,15 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: false
+  gather_facts: true
+
+- name: Assign roles
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  roles:
+    - { role: schedule_stressng, tags: schedule_stressng }
+    - { role: ollama_install, tags: ollama_install }
+    - { role: ngircd_install, tags: ngircd_install }
+...

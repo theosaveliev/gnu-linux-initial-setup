@@ -26,7 +26,7 @@
 	# Server name in the IRC network, must contain at least one dot
 	# (".") and be unique in the IRC network. When not set, ngIRCd tries
 	# to deduce a valid IRC server name from the local host name.
-	Name = local-vm
+	Name = site.local
 
 	# Information about the server and the administrator, used by the
 	# ADMIN command. Not required by server but by RFC!
@@ -109,14 +109,14 @@
 
 	# Maximum number of simultaneous in- and outbound connections the
 	# server is allowed to accept (0: unlimited):
-	MaxConnections = 2000
+	MaxConnections = 1000
 
 	# Maximum number of simultaneous connections from a single IP address
 	# the server will accept (0: unlimited):
-	MaxConnectionsIP = 2000
+	MaxConnectionsIP = 1000
 
 	# Maximum number of channels a user can be member of (0: no limit):
-	MaxJoins = 2000
+	MaxJoins = 1000
 
 	# Maximum length of an user nickname (Default: 9, as in RFC 2812).
 	# Please note that all servers in an IRC network MUST use the same
@@ -289,7 +289,7 @@
 
 	# SSL Server Key Certificate
 	;CertFile = :ETCDIR:/ssl/server-cert.pem
-	CertFile = /etc/letsencrypt/live/foo
+	CertFile = /etc/letsencrypt/live/site.local/fullchain.pem
 
 	# Select cipher suites allowed for SSL/TLS connections. This defaults
 	# to HIGH:!aNULL:@STRENGTH (OpenSSL) or SECURE128 (GnuTLS).
@@ -306,7 +306,7 @@
 
 	# SSL Server Key
 	;KeyFile = :ETCDIR:/ssl/server-key.pem
-	KeyFile = /etc/letsencrypt/live/bar
+	KeyFile = /etc/letsencrypt/live/site.local/privkey.pem
 
 	# password to decrypt SSLKeyFile (OpenSSL only)
 	;KeyFilePassword = secret

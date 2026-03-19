@@ -1,0 +1,14 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: false
+  gather_facts: true
+
+- name: Assign roles
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  roles:
+    - { role: docker_install, tags: docker_install }
+    - { role: docker_configure, tags: docker_configure }
+...

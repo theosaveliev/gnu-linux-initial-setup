@@ -1,0 +1,18 @@
+---
+- name: Create webroot directory for stub
+  ansible.builtin.file:
+    path: "/var/www/{{ webroot_domain }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: "0755"
+
+- name: Copy stub page
+  ansible.builtin.copy:
+    src: "index.html"
+    dest: "/var/www/{{ webroot_domain }}/index.html"
+    owner: www-data
+    group: www-data
+    mode: "0644"
+    force: true
+...
