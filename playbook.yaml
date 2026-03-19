@@ -1,14 +1,19 @@
 ---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: false
+  gather_facts: true
+
 - name: Assign roles
   hosts: "{{ target_hosts | default('local-vm') }}"
   become: true
-  gather_facts: true
+  gather_facts: false
   roles:
     - { role: apt_disable_timers, tags: apt_disable_timers }
     - { role: apt_upgrade, tags: apt_upgrade }
-    - { role: install_edge_kernel, tags: install_edge_kernel }
+    - { role: kernel_install, tags: kernel_install }
     - { role: nft_install, tags: nft_install }
-    - { role: nft_apply_rules, tags: nft_apply_rules }
+    - { role: nft_apply, tags: nft_apply }
     - { role: sysctl_net, tags: sysctl_net }
     - { role: linux-system-roles.journald, tags: journald }
     - { role: devsec.hardening.ssh_hardening, tags: ssh_hardening }
@@ -17,4 +22,7 @@
     - { role: ollama_install, tags: ollama_install }
     - { role: docker_install, tags: docker_install }
     - { role: docker_configure, tags: docker_configure }
+    - { role: geerlingguy.nginx, tags: nginx_install }
+    - { role: geerlingguy.certbot, tags: certbot_install }
+    - { role: ngircd_install, tags: ngircd_install }
 ...

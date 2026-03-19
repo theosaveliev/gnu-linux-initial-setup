@@ -5,30 +5,28 @@ Baseline script for Internet-facing hosts.
 Tested OS: Ubuntu 22.04 LTS, 24.04 LTS
 
 
-#### Collections
+#### Requirements
 ```
-% ansible-galaxy role install linux-system-roles.journald
-% ansible-galaxy collection install devsec.hardening
-% ansible-galaxy collection install ansible.posix
+% ansible-galaxy install -r requirements.yaml
 ```
 
 
 #### Playbook
 
 ```
-% ansible-playbook playbook.yaml \
-    -i inventory/hosts.yaml \
-    --private-key ~/.ssh/id_ed25519 \
-    -e "target_hosts=local-vm" \
-    -t nft_apply_rules 
+% ansible-playbook playbook.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=local-vm" 
+
+% ansible-playbook playbook.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=local-vm" -t sysctl_net
+
+% ansible-playbook debug.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=local-vm"
 ```
 
 
 #### Commands
 
 ```
-% ansible all -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -b -a whoami
-% ansible all -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -b -m reboot
+% ansible all -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 --forks 1 -b -a whoami
+% ansible all -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 --forks 1 -b -m reboot
 ```
 
 

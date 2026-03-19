@@ -1,7 +1,7 @@
 ---
 - name: Copy daemon conf
   ansible.builtin.copy:
-    src: docker/daemon.json
+    src: "docker.json/{{ ansible_facts['hostname'] }}"
     dest: /etc/docker/daemon.json
     owner: root
     group: root

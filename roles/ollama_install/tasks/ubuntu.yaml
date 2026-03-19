@@ -14,9 +14,14 @@
 
 - name: Download Ollama installer
   ansible.builtin.get_url:
-    url: https://ollama.com/install.sh
+    url: "https://ollama.com/install.sh"
     dest: "{{ ansible_facts['user_dir'] }}/install_ollama.sh"
-    mode: "0755"
+    mode: "0700"
+    owner: "{{ ansible_user }}"
+    validate_certs: true
+    decompress: false
+    force: true
+    backup: false
 
 - name: Run Ollama installer
   ansible.builtin.shell: "{{ ansible_facts['user_dir'] }}/install_ollama.sh"

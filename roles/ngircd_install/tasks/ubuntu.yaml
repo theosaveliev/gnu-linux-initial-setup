@@ -1,0 +1,55 @@
+---
+- name: Ensure ngircd directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/ngircd/config"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/ngircd/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy ngircd conf
+  ansible.builtin.copy:
+    src: "ngircd.conf/{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/ngircd/config/ngircd.conf"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Generate DH params
+  community.crypto.openssl_dhparam:
+    path: "{{ ansible_facts['user_dir'] }}/ngircd/config/dhparams.pem"
+    size: 2048
+    owner: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Template systemd service
+  ansible.builtin.template:
+    src: ngircd.service.j2
+    dest: /etc/systemd/system/ngircd.service
+    owner: root
+    group: root
+    mode: "0644"
+    force: true
+
+- name: Start ngircd
+  ansible.builtin.systemd_service:
+    name: ngircd.service
+    state: restarted
+    enabled: true
+    masked: false
+    daemon_reload: true
+
+- name: Install irssi
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name: irssi
+...

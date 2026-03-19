@@ -1,0 +1,10 @@
+---
+collections:
+  - name: ansible.posix
+  - name: community.crypto
+  - name: devsec.hardening
+
+roles:
+  - name: linux-system-roles.journald
+  - name: geerlingguy.certbot
+...

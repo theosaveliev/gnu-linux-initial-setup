@@ -1,0 +1,20 @@
+---
+services:
+  ngircd:
+    image: "{{ ngircd_image }}"
+    container_name: ngircd
+    environment:
+      - PUID=0
+      - PGID=0
+    volumes:
+      - type: bind
+        source: ./config
+        target: /config
+      - type: bind
+        source: "{{ ngircd_cert_dir }}"
+        target: "{{ ngircd_cert_dir }}"
+    ports:
+      - "6667:6667"
+      - "6697:6697"
+    restart: always
+...

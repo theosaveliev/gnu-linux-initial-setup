@@ -14,6 +14,11 @@ table inet firewall {
 		# ssh
 		ct state new tcp dport 2200 meter ssh_rate { ip saddr limit rate 5/minute burst 10 packets } counter accept
 		ct state new tcp dport 2200 counter log prefix "ssh-rate-limit: " drop
+		# nginx
+		ct state new tcp dport 80 meter http_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		ct state new tcp dport 80 counter log prefix "http-rate-limit: " drop
+		ct state new tcp dport 443 meter https_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		ct state new tcp dport 443 counter log prefix "https-rate-limit: " drop
 		counter comment "packets reached the end of the chain"
 	}
 
@@ -22,10 +27,13 @@ table inet firewall {
         ct state established,related counter accept
 		ct state invalid counter drop
 		# docker
-		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 80 meter docker_http_rate { ip saddr limit rate 5/minute burst 10 packets } counter accept
-		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 80 counter log prefix "docker-http-rate-limit: " drop
-		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 meter docker_https_rate { ip saddr limit rate 5/minute burst 10 packets } counter accept
-		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 counter log prefix "docker-https-rate-limit: " drop
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 80 meter docker_http_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 80 counter log prefix "docker-http-rate-limit: " drop
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 meter docker_https_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 counter log prefix "docker-https-rate-limit: " drop
+		# ngircd
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 6697 meter docker_ircd_6667_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 6697 counter log prefix "docker-ircd-6667-rate-limit: " drop
 
 		counter comment "packets reached the end of the chain"
 	}

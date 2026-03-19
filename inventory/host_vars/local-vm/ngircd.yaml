@@ -1,0 +1,5 @@
+---
+ngircd_docker_cli: /usr/bin/docker
+ngircd_image: "lscr.io/linuxserver/ngircd:version-27-r1"
+ngircd_cert_dir: /etc/letsencrypt
+...
