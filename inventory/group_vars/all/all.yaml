@@ -13,14 +13,25 @@ journald_keep_free: 10240
 ssh_server_ports: ["2200"]
 ssh_permit_tunnel: "yes"
 ssh_allow_tcp_forwarding: "yes"
-sftp_enabled: false
+sftp_enabled: true
 
 # devsec.hardening.os_hardening
 sysctl_overwrite:
   net.ipv4.ip_forward: 1
 
+# used by ngircd_install, dhtnode_install, etc
+docker_cli: /usr/bin/docker
+
 # ngircd_install
-ngircd_docker_cli: /usr/bin/docker
 ngircd_image: "lscr.io/linuxserver/ngircd:version-27-r1"
 ngircd_cert_dir: /etc/letsencrypt
+
+# dhtnode_install
+dhtnode_image: "ghcr.io/savoirfairelinux/opendht/opendht-alpine:v3.7.7"
+dhtnode_port: "4222"
+dhtnode_bootstrap_node: "bootstrap.jami.net"
+dhtnode_network_id: "0"
+
+# coturn_install
+coturn_image: "coturn/coturn:4.9.0"
 ...

@@ -1,11 +1,11 @@
 [Unit]
-Description=ngircd
+Description=coturn
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=simple
-WorkingDirectory={{ ansible_facts['user_dir'] }}/ngircd
+WorkingDirectory={{ ansible_facts['user_dir'] }}/coturn
 ExecStart={{ docker_cli }} compose -f compose.yaml up
 ExecStop={{ docker_cli }} compose -f compose.yaml down
 Restart=always

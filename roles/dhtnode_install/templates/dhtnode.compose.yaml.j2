@@ -1,0 +1,21 @@
+---
+services:
+  dhtnode:
+    image: "{{ dhtnode_image }}"
+    container_name: dhtnode
+    ports:
+      - "{{ dhtnode_port }}:{{ dhtnode_port }}/udp"
+    command:
+      - "/usr/bin/dhtnode"
+      - "-b"
+      - "{{ dhtnode_bootstrap_node }}"
+      - "-p"
+      - "{{ dhtnode_port }}"
+      - "-n"
+      - "{{ dhtnode_network_id }}"
+      - "-D"
+      - "-v"
+      - "-s"
+    network_mode: host
+    restart: always
+...

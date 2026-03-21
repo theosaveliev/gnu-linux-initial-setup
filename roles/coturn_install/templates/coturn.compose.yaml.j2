@@ -1,0 +1,12 @@
+---
+services:
+  coturn:
+    image: "{{ coturn_image }}"
+    container_name: coturn
+    volumes:
+      - type: bind
+        source: ./config
+        target: /etc/coturn
+    network_mode: host
+    restart: always
+...
