@@ -1,18 +1,44 @@
 ---
-- name: Create webroot directory for stub
+- name: Create directories
   ansible.builtin.file:
-    path: "/var/www/{{ webroot_domain }}"
+    path: "/var/www/{{ webroot_domain }}/health"
     state: directory
     owner: www-data
     group: www-data
-    mode: "0755"
+    mode: "0775"
 
 - name: Copy stub page
   ansible.builtin.copy:
-    src: "index.html"
+    src: "webroot.index.html"
     dest: "/var/www/{{ webroot_domain }}/index.html"
     owner: www-data
     group: www-data
     mode: "0644"
     force: true
+
+- name: Add ansible_user to the www-data, systemd-journal groups
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: www-data,systemd-journal
+    append: true
+    state: present
+
+- name: Copy health check script
+  ansible.builtin.copy:
+    src: "webroot.health.sh"
+    dest: "{{ ansible_facts['user_dir'] }}/health_check.sh"
+    owner: "{{ ansible_user }}"
+    mode: "0750"
+    force: true
+
+- name: Schedule health check
+  ansible.builtin.cron:
+    user: "{{ ansible_user }}"
+    name: "Docker health check"
+    minute: "*"
+    hour: "*"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: "{{ ansible_facts['user_dir'] }}/health_check.sh /var/www/{{ webroot_domain }}/health/index.html"
 ...

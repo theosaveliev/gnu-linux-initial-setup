@@ -34,4 +34,5 @@ dhtnode_network_id: "0"
 
 # coturn_install
 coturn_image: "coturn/coturn:4.9.0"
+coturn_port: "3478"
 ...

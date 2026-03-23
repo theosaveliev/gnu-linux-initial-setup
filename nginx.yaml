@@ -13,7 +13,7 @@
       - listen: "80 default_server"
         server_name: "_"
         root: "/var/www/{{ webroot_domain }}"
-        filename: "nginx.test"
+        filename: "temp.conf"
         state: "present"
   roles:
     - { role: webroot_create, tags: webroot_create }
@@ -43,7 +43,7 @@
       - listen: "80 default_server"
         server_name: "_"
         root: "/var/www/{{ webroot_domain }}"
-        filename: "nginx.test"
+        filename: "temp.conf"
         state: "absent"
 
       - listen: "80"
