@@ -2,6 +2,7 @@
 
 OUTPUT_FILE="$1"
 SINCE="1 minutes ago"
+TMP_FILE=$(mktemp)
 
 {
     echo '<html><head><meta name="robots" content="noindex"><meta http-equiv="refresh" content="60"></head><body style="font-family: monospace; white-space: pre;">'
@@ -17,6 +18,7 @@ SINCE="1 minutes ago"
     echo "coturn  requests: $(journalctl -u coturn --since "$SINCE" --no-pager -q 2>/dev/null | grep -ci 'incoming' || true) errors: $(journalctl -u coturn --since "$SINCE" --no-pager -q 2>/dev/null | grep -ci 'error' || true)"
 
     echo '</body></html>'
-} > "$OUTPUT_FILE"
+} > "$TMP_FILE"
 
-chmod 644 "$OUTPUT_FILE"
+chmod 644 "$TMP_FILE"
+mv "$TMP_FILE" "$OUTPUT_FILE"
