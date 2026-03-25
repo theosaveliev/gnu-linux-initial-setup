@@ -1,0 +1,77 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: false
+  gather_facts: true
+
+- name: Create temporary HTTP vhost, request TLS certs
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  vars:
+    webroot_domain: "{{ irc_domain }}"
+    nginx_vhosts:
+      - listen: "80"
+        server_name: "{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "irc.temp.conf"
+        state: "present"
+    certbot_certs:
+      - name: "{{ irc_domain }}"
+        email: "{{ certbot_admin_email }}"
+        webroot: "/var/www/{{ irc_domain }}"
+        domains:
+          - "{{ irc_domain }}"
+  roles:
+    - { role: webroot_create, tags: webroot_create }
+    - { role: geerlingguy.nginx, tags: nginx_temp_vhost }
+    - { role: geerlingguy.certbot, tags: certbot_install }
+
+- name: Install IRC
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  vars:
+    nginx_vhosts:
+      - listen: "80"
+        server_name: "{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "irc.temp.conf"
+        state: "absent"
+
+      - listen: "80"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
+        filename: "{{ irc_domain }}.redirect.conf"
+        return: "301 https://{{ irc_domain }}$request_uri"
+
+      - listen: "443 ssl"
+        server_name: "{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "{{ irc_domain }}.conf"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ irc_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ irc_domain }}/privkey.pem;
+
+          location /health {
+            alias /var/www/health/;
+            index index.html;
+            try_files $uri $uri/ =404;
+          }
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ thelounge_port }};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_read_timeout 86400;
+          }
+  roles:
+    - { role: ngircd_install, tags: ngircd_install }
+    - { role: thelounge_install, tags: thelounge_install }
+    - { role: health_install, tags: health_install }
+    - { role: geerlingguy.nginx, tags: nginx_tls }
+...

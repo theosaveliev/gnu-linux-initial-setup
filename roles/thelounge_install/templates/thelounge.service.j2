@@ -1,11 +1,11 @@
 [Unit]
-Description=dhtnode
+Description=thelounge
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=simple
-WorkingDirectory={{ ansible_facts['user_dir'] }}/dhtnode
+WorkingDirectory={{ ansible_facts['user_dir'] }}/thelounge
 ExecStart={{ docker_cli }} compose -f compose.yaml up
 ExecStop={{ docker_cli }} compose -f compose.yaml down
 Restart=always

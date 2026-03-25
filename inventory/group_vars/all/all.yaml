@@ -1,13 +1,13 @@
 ---
 ansible_user: ubuntu
-ansible_port: 2200
+ansible_port: "2200"
 
 # linux-system-roles.journald
 journald_persistent: true
-journald_max_disk_size: 2048
+journald_max_disk_size: "2048"
 journald_per_user: true
 journald_sync_interval: 1
-journald_keep_free: 10240
+journald_keep_free: "10240"
 
 # devsec.hardening.ssh_hardening
 ssh_server_ports: ["2200"]
@@ -19,20 +19,16 @@ sftp_enabled: true
 sysctl_overwrite:
   net.ipv4.ip_forward: 1
 
-# used by ngircd_install, dhtnode_install, etc
-docker_cli: /usr/bin/docker
-
 # ngircd_install
 ngircd_image: "lscr.io/linuxserver/ngircd:version-27-r1"
+ngircd_port: "6667"
+ngircd_tls_port: "6697"
 ngircd_cert_dir: /etc/letsencrypt
 
-# dhtnode_install
-dhtnode_image: "ghcr.io/savoirfairelinux/opendht/opendht-alpine:v3.7.7"
-dhtnode_port: "4222"
-dhtnode_bootstrap_node: "bootstrap.jami.net"
-dhtnode_network_id: "0"
+# thelounge_install
+thelounge_image: "lscr.io/linuxserver/thelounge:4.4.3"
+thelounge_port: "9000"
 
-# coturn_install
-coturn_image: "coturn/coturn:4.9.0"
-coturn_port: "3478"
+# ngircd_install, thelounge_install
+docker_cli: /usr/bin/docker
 ...

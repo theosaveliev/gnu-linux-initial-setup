@@ -14,10 +14,10 @@ services:
         source: "{{ ngircd_cert_dir }}"
         target: "{{ ngircd_cert_dir }}"
     ports:
-      - "6667:6667"
-      - "6697:6697"
+      - "{{ ngircd_port }}:{{ ngircd_port }}"
+      - "{{ ngircd_tls_port }}:{{ ngircd_tls_port }}"
     healthcheck:
-      test: ["CMD-SHELL", "grep -q ':1A0B ' /proc/net/tcp && grep -q ':1A29 ' /proc/net/tcp"]
+      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(ngircd_port | int) }} ' /proc/net/tcp && grep -q ':{{ "%04X" | format(ngircd_tls_port | int) }} ' /proc/net/tcp"]
       interval: 30s
       timeout: 2s
       retries: 3

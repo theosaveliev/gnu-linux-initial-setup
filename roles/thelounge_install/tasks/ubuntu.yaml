@@ -1,0 +1,41 @@
+---
+- name: Ensure thelounge directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/thelounge/config"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Copy config js
+  ansible.builtin.copy:
+    src: "thelounge.config.js/{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/thelounge/config/config.js"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: thelounge.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/thelounge/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Template systemd service
+  ansible.builtin.template:
+    src: thelounge.service.j2
+    dest: /etc/systemd/system/thelounge.service
+    owner: root
+    group: root
+    mode: "0644"
+    force: true
+
+- name: Start thelounge
+  ansible.builtin.systemd_service:
+    name: thelounge.service
+    state: restarted
+    enabled: true
+    masked: false
+    daemon_reload: true
+...

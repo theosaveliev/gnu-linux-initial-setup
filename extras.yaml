@@ -11,7 +11,4 @@
   roles:
     - { role: schedule_stressng, tags: schedule_stressng }
     - { role: ollama_install, tags: ollama_install }
-    - { role: ngircd_install, tags: ngircd_install }
-    - { role: dhtnode_install, tags: dhtnode_install }
-    - { role: coturn_install, tags: coturn_install }
 ...

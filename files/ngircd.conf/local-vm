@@ -26,7 +26,7 @@
 	# Server name in the IRC network, must contain at least one dot
 	# (".") and be unique in the IRC network. When not set, ngIRCd tries
 	# to deduce a valid IRC server name from the local host name.
-	Name = site.local
+	Name = irc.site.local
 
 	# Information about the server and the administrator, used by the
 	# ADMIN command. Not required by server but by RFC!
@@ -42,7 +42,7 @@
 	# Info text of the server. This will be shown by WHOIS and
 	# LINKS requests for example. Set to the server software name and
 	# version by default.
-	;Info = Server Info Text
+	Info = Local IRC
 
 	# Comma separated list of IP addresses on which the server should
 	# listen. Default values are:
@@ -57,17 +57,17 @@
 	;MotdFile = :ETCDIR:/ngircd.motd
 
 	# A simple Phrase (<127 chars) if you don't want to use a motd file.
-	;MotdPhrase = "Hello world!"
+	MotdPhrase = "Cheer up, beautiful people!"
 
 	# The name of the IRC network to which this server belongs. This name
 	# is optional, should only contain ASCII characters, and can't contain
 	# spaces. It is only used to inform clients. The default is empty,
 	# so no network name is announced to clients.
-	Network = network.local
+	Network = local
 
 	# Global password for all users needed to connect to the server.
 	# (Default: not set)
-	Password = foo
+	Password = <password>
 
 	# This tells ngIRCd to write its current process ID to a file.
 	# Note that the pidfile is written AFTER chroot and switching the
@@ -116,12 +116,12 @@
 	MaxConnectionsIP = 1000
 
 	# Maximum number of channels a user can be member of (0: no limit):
-	MaxJoins = 20
+	MaxJoins = 50
 
 	# Maximum length of an user nickname (Default: 9, as in RFC 2812).
 	# Please note that all servers in an IRC network MUST use the same
 	# maximum nickname length!
-	MaxNickLength = 9
+	MaxNickLength = 30
 
 	# Maximum penalty time increase in seconds, per penalty event. Set to -1
 	# for no limit (the default), 0 to disable penalties altogether. The
@@ -175,7 +175,7 @@
 
 	# The Salt for cloaked hostname hashing. When undefined a random
 	# hash is generated after each server start.
-	CloakHostSalt = abcdefghijklmnopqrstuvwxyz
+	CloakHostSalt = <salt>
 
 	# Set every clients' user name to their nickname
 	;CloakUserToNick = yes
@@ -185,7 +185,7 @@
 	ConnectIPv4 = no
 
 	# Default channel mode(s) to set on new channels. Default: none.
-	;DefaultChannelModes = n
+	DefaultChannelModes = n
 
 	# Default user mode(s) to set on new local clients. Please note that
 	# only modes can be set that the client could set using regular MODE
@@ -209,7 +209,7 @@
 
 	# Enhance user privacy slightly (useful for IRC server on TOR or I2P)
 	# by censoring some information like idle time, logon time, etc.
-	MorePrivacy = yes
+	MorePrivacy = no
 
 	# Normally ngIRCd doesn't send any messages to a client until it is
 	# registered. Enable this option to let the daemon send "NOTICE *"
@@ -272,7 +272,7 @@
 	# Password required for using the WEBIRC command used by some
 	# Web-to-IRC gateways. If not set/empty, the WEBIRC command can't
 	# be used. (Default: not set)
-	;WebircPassword = xyz
+	WebircPassword = <password>
 
 [SSL]
 	# SSL-related configuration options. Please note that this section
@@ -289,7 +289,7 @@
 
 	# SSL Server Key Certificate
 	;CertFile = :ETCDIR:/ssl/server-cert.pem
-	CertFile = /etc/letsencrypt/live/site.local/fullchain.pem
+	CertFile = /etc/letsencrypt/live/irc.site.local/fullchain.pem
 
 	# Select cipher suites allowed for SSL/TLS connections. This defaults
 	# to HIGH:!aNULL:@STRENGTH (OpenSSL) or SECURE128 (GnuTLS).
@@ -306,7 +306,7 @@
 
 	# SSL Server Key
 	;KeyFile = :ETCDIR:/ssl/server-key.pem
-	KeyFile = /etc/letsencrypt/live/site.local/privkey.pem
+	KeyFile = /etc/letsencrypt/live/irc.site.local/privkey.pem
 
 	# password to decrypt SSLKeyFile (OpenSSL only)
 	;KeyFilePassword = secret
@@ -315,20 +315,8 @@
 	Ports = 6697
 
 [Operator]
-	# [Operator] sections are used to define IRC Operators. There may be
-	# more than one [Operator] block, one for each local operator.
-
-	# ID of the operator (may be different of the nickname)
-	Name = foo
-
-	# Password of the IRC operator
-	Password = bar
-
-	# Optional Mask from which /OPER will be accepted
-	;Mask = *!ident@somewhere.example.com
-
-[Operator]
-	# More [Operator] sections, if you like ...
+	Name = <name>
+	Password = <password>
 
 [Server]
 	# Other servers are configured in [Server] sections. If you
