@@ -3,6 +3,7 @@ collections:
   - name: ansible.posix
   - name: community.crypto
   - name: devsec.hardening
+  - name: community.docker
 
 roles:
   - name: linux-system-roles.journald

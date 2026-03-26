@@ -14,6 +14,14 @@
     mode: "0600"
     force: true
 
+- name: Copy logo svg
+  ansible.builtin.copy:
+    src: "wigwam-tipi-svgrepo-com.svg"
+    dest: "{{ ansible_facts['user_dir'] }}/thelounge/wigwam-tipi-svgrepo-com.svg"
+    owner: "{{ ansible_user }}"
+    mode: "0444"
+    force: true
+
 - name: Template compose file
   ansible.builtin.template:
     src: thelounge.compose.yaml.j2
@@ -38,4 +46,27 @@
     enabled: true
     masked: false
     daemon_reload: true
+
+- name: Install community docker requirements
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - python3-requests
+      - python3-docker
+
+- name: Install npm packages
+  community.docker.docker_container_exec:
+    container: thelounge
+    argv:
+      - thelounge
+      - install
+      - "{{ item }}"
+  loop:
+    - thelounge-theme-monokai
+    - thelounge-theme-mininapse
+    - thelounge-theme-zenburn
+    - thelounge-theme-dracula-official
+    - thelounge-theme-ianon
 ...
