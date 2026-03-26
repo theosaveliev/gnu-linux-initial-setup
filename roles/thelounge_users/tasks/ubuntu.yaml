@@ -1,0 +1,21 @@
+---
+- name: Install community docker requirements
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - python3-requests
+      - python3-docker
+
+- name: Add users
+  community.docker.docker_container_exec:
+    container: thelounge
+    argv:
+      - thelounge
+      - add
+      - "{{ item.user }}"
+      - "--password"
+      - "{{ item.password }}"
+  loop: "{{ thelounge_users }}"
+...

@@ -31,4 +31,8 @@ thelounge_port: "9000"
 
 # ngircd_install, thelounge_install
 docker_cli: /usr/bin/docker
+
+# thelounge_users
+thelounge_users:
+    - { user: "test", password: "test" }
 ...

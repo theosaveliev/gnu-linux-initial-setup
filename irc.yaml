@@ -74,4 +74,5 @@
     - { role: thelounge_install, tags: thelounge_install }
     - { role: health_install, tags: health_install }
     - { role: geerlingguy.nginx, tags: nginx_tls }
+    - { role: thelounge_users, tags: thelounge_users }
 ...

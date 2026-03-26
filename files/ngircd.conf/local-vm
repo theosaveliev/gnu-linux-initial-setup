@@ -218,7 +218,7 @@
 
 	# Should IRC Operators be allowed to use the MODE command even if
 	# they are not(!) channel-operators?
-	OperCanUseMode = no
+	OperCanUseMode = yes
 
 	# Should IRC Operators get AutoOp (+o) in persistent (+P) channels?
 	OperChanPAutoOp = yes
@@ -417,6 +417,8 @@
 	;KeyFile = :ETCDIR:/#chan.key
 
 [Channel]
-	# More [Channel] sections, if you like ...
+	Name = #test
+	Topic = test
+	Modes = +nk test
 
 # -eof-
