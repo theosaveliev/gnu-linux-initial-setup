@@ -1,0 +1,15 @@
+---
+- name: Install npm packages
+  community.docker.docker_container_exec:
+    container: thelounge
+    argv:
+      - thelounge
+      - install
+      - "{{ item }}"
+  loop:
+    - thelounge-theme-monokai
+    - thelounge-theme-mininapse
+    - thelounge-theme-zenburn
+    - thelounge-theme-dracula-official
+    - thelounge-theme-ianon
+...

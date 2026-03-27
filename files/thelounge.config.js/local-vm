@@ -243,12 +243,12 @@ module.exports = {
     // }
     // ```
     defaults: {
-        name: "Local",
-        host: "irc.site.local",
+        name: "irc.local",
+        host: "irc.local",
         port: 6697,
         password: "<password>",
         tls: true,
-        rejectUnauthorized: true,
+        rejectUnauthorized: false,
         nick: "",
         username: "",
         realname: "",
@@ -342,7 +342,7 @@ module.exports = {
     // This value is set to `null` to disable WEBIRC by default.
     // webirc: null,
     webirc: {
-        "irc.site.local": "<password>",
+        "irc.local": "<password>",
     },
     // ## identd and oidentd support
     // ### `identd`

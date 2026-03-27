@@ -1,4 +1,7 @@
 ---
+- name: Run common tasks
+  ansible.builtin.import_tasks: common.yaml
+
 - name: Run Ubuntu tasks
   ansible.builtin.import_tasks: ubuntu.yaml
   when: ansible_facts["distribution"] == "Ubuntu"

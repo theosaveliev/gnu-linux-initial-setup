@@ -16,6 +16,10 @@ services:
     ports:
       - "{{ ngircd_port }}:{{ ngircd_port }}"
       - "{{ ngircd_tls_port }}:{{ ngircd_tls_port }}"
+    networks:
+      irc-net:
+        aliases:
+          - "{{ irc_domain }}"
     healthcheck:
       test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(ngircd_port | int) }} ' /proc/net/tcp && grep -q ':{{ "%04X" | format(ngircd_tls_port | int) }} ' /proc/net/tcp"]
       interval: 30s
@@ -23,4 +27,7 @@ services:
       retries: 3
       start_period: 10s
     restart: always
+networks:
+  irc-net:
+    name: irc-net
 ...

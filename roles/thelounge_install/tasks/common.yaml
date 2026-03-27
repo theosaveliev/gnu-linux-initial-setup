@@ -1,0 +1,32 @@
+---
+- name: Ensure thelounge directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/thelounge/config"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Copy config js
+  ansible.builtin.copy:
+    src: "thelounge.config.js/{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/thelounge/config/config.js"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy logo svg
+  ansible.builtin.copy:
+    src: "wigwam-tipi-svgrepo-com.svg"
+    dest: "{{ ansible_facts['user_dir'] }}/thelounge/wigwam-tipi-svgrepo-com.svg"
+    owner: "{{ ansible_user }}"
+    mode: "0444"
+    force: true
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: thelounge.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/thelounge/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

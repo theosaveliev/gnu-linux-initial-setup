@@ -23,7 +23,7 @@ def main():
         passwords[user] = generate_password(length=20)
 
     for user, pw in passwords.items():
-        print(f'    - {{ user: "{user}", password: "{pw}" }}')
+        print(f'  - {{ user: "{user}", password: "{pw}" }}')
 
     for user, pw in passwords.items():
         print("[Operator]")

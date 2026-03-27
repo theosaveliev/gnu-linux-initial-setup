@@ -1,0 +1,41 @@
+---
+- name: Ensure cert dir
+  ansible.builtin.file:
+    path: "{{ selfsigned_cert_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Generate private key
+  community.crypto.openssl_privatekey:
+    path: "{{ selfsigned_cert_dir }}/privkey.pem"
+    type: "RSA"
+    size: 4096
+    state: present
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Create CSR
+  community.crypto.openssl_csr:
+    path: "{{ selfsigned_cert_dir }}/cert.csr"
+    privatekey_path: "{{ selfsigned_cert_dir }}/privkey.pem"
+    common_name: "{{ selfsigned_cert_domain }}"
+    use_common_name_for_san: true
+    state: present
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Generate self-signed cert
+  community.crypto.x509_certificate:
+    path: "{{ selfsigned_cert_dir }}/fullchain.pem"
+    privatekey_path: "{{ selfsigned_cert_dir }}/privkey.pem"
+    csr_path: "{{ selfsigned_cert_dir }}/cert.csr"
+    provider: selfsigned
+    selfsigned_not_after: "+825d"
+    state: present
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

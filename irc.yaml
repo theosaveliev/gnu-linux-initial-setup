@@ -72,7 +72,8 @@
   roles:
     - { role: ngircd_install, tags: ngircd_install }
     - { role: thelounge_install, tags: thelounge_install }
+    - { role: thelounge_themes, tags: thelounge_themes }
+    - { role: thelounge_users, tags: thelounge_users }
     - { role: health_install, tags: health_install }
     - { role: geerlingguy.nginx, tags: nginx_tls }
-    - { role: thelounge_users, tags: thelounge_users }
 ...

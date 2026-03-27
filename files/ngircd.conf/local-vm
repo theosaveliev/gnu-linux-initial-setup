@@ -26,7 +26,7 @@
 	# Server name in the IRC network, must contain at least one dot
 	# (".") and be unique in the IRC network. When not set, ngIRCd tries
 	# to deduce a valid IRC server name from the local host name.
-	Name = irc.site.local
+	Name = irc.local
 
 	# Information about the server and the administrator, used by the
 	# ADMIN command. Not required by server but by RFC!
@@ -42,7 +42,7 @@
 	# Info text of the server. This will be shown by WHOIS and
 	# LINKS requests for example. Set to the server software name and
 	# version by default.
-	Info = Local IRC
+	; Info = irc.local
 
 	# Comma separated list of IP addresses on which the server should
 	# listen. Default values are:
@@ -289,7 +289,7 @@
 
 	# SSL Server Key Certificate
 	;CertFile = :ETCDIR:/ssl/server-cert.pem
-	CertFile = /etc/letsencrypt/live/irc.site.local/fullchain.pem
+	CertFile = /etc/letsencrypt/live/irc.local/fullchain.pem
 
 	# Select cipher suites allowed for SSL/TLS connections. This defaults
 	# to HIGH:!aNULL:@STRENGTH (OpenSSL) or SECURE128 (GnuTLS).
@@ -306,7 +306,7 @@
 
 	# SSL Server Key
 	;KeyFile = :ETCDIR:/ssl/server-key.pem
-	KeyFile = /etc/letsencrypt/live/irc.site.local/privkey.pem
+	KeyFile = /etc/letsencrypt/live/irc.local/privkey.pem
 
 	# password to decrypt SSLKeyFile (OpenSSL only)
 	;KeyFilePassword = secret

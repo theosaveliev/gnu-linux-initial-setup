@@ -14,7 +14,10 @@ services:
       - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-transparent-bg.svg
       - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-vertical-transparent-bg-inverted.svg
       - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg
-    network_mode: host
+    ports:
+      - "{{ thelounge_port }}:{{ thelounge_port }}"
+    networks:
+      - irc-net
     healthcheck:
       test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(thelounge_port | int) }} ' /proc/net/tcp"]
       interval: 30s
@@ -22,4 +25,7 @@ services:
       retries: 3
       start_period: 10s
     restart: always
+networks:
+  irc-net:
+    external: true
 ...

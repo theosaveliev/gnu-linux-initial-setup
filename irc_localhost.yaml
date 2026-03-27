@@ -1,0 +1,16 @@
+---
+- name: Install IRC
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: false
+  gather_facts: true
+  vars:
+    selfsigned_cert_dir: "{{ ansible_facts['user_dir'] }}/ngircd/certs"
+    selfsigned_cert_domain: "{{ irc_domain }}"
+    ngircd_cert_dir: "{{ selfsigned_cert_dir }}"
+  roles:
+    - { role: selfsigned_cert, tags: selfsigned_cert }
+    - { role: ngircd_install, tags: ngircd_install }
+    - { role: thelounge_install, tags: thelounge_install }
+    - { role: thelounge_themes, tags: thelounge_themes }
+    - { role: thelounge_users, tags: thelounge_users }
+...
