@@ -8,8 +8,12 @@ services:
       - PGID=1000
     volumes:
       - ./config:/config
-      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg
+      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg-inverted.svg
+      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg.svg
+      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-transparent-bg-inverted.svg
+      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-transparent-bg.svg
       - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-vertical-transparent-bg-inverted.svg
+      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg
     network_mode: host
     healthcheck:
       test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(thelounge_port | int) }} ' /proc/net/tcp"]
