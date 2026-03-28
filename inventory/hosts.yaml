@@ -4,10 +4,15 @@ all:
     local-vm:
       ansible_host: "192.168.64.17"
       irc_domain: "irc.local"
+      thelounge_users:
+        - { user: "test", password: "test" }
+
     laptop:
       ansible_host: localhost
       irc_domain: "irc.local"
       ansible_connection: local
       ansible_user: username
       ansible_python_interpreter: /home/username/.ansible/python/.venv/bin/python
+      thelounge_users:
+        - { user: "test", password: "test" }
 ...

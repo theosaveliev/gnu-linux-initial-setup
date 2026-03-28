@@ -6,6 +6,13 @@
     owner: "{{ ansible_user }}"
     mode: "0755"
 
+- name: Ensure thelounge cert dir
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/thelounge/certs"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+
 - name: Copy config js
   ansible.builtin.copy:
     src: "thelounge.config.js/{{ ansible_facts['hostname'] }}"

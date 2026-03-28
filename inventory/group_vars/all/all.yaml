@@ -23,7 +23,6 @@ sysctl_overwrite:
 ngircd_image: "lscr.io/linuxserver/ngircd:version-27-r1"
 ngircd_port: "6667"
 ngircd_tls_port: "6697"
-ngircd_cert_dir: /etc/letsencrypt
 
 # thelounge_install
 thelounge_image: "lscr.io/linuxserver/thelounge:4.4.3"
@@ -31,8 +30,4 @@ thelounge_port: "9000"
 
 # ngircd_install, thelounge_install
 docker_cli: /usr/bin/docker
-
-# thelounge_users
-thelounge_users:
-    - { user: "test", password: "test" }
 ...

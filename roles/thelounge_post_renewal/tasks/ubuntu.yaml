@@ -1,0 +1,22 @@
+---
+- name: Ensure thelounge cert dir
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/thelounge/certs"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Template post renewal script
+  ansible.builtin.template:
+    src: thelounge.post.renew.sh.j2
+    dest: /etc/letsencrypt/renewal-hooks/post/thelounge.post.renew.sh
+    owner: root
+    group: root
+    mode: "0700"
+    force: true
+
+- name: Run post renewal script
+  ansible.builtin.command: /etc/letsencrypt/renewal-hooks/post/thelounge.post.renew.sh
+  register: thelounge_post_renewal_tmp
+  changed_when: "thelounge_post_renewal_tmp.rc == 0"
+...

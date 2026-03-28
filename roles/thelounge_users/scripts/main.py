@@ -23,12 +23,12 @@ def main():
         passwords[user] = generate_password(length=20)
 
     for user, pw in passwords.items():
-        print(f'  - {{ user: "{user}", password: "{pw}" }}')
+        print(f'        - {{ user: "{user}", password: "{pw}" }}')
 
     for user, pw in passwords.items():
         print("[Operator]")
-        print(f"    Name = {user}")
-        print(f"    Password = {pw}")
+        print(f"\tName = {user}")
+        print(f"\tPassword = {pw}")
 
 
 if __name__ == "__main__":

@@ -289,7 +289,7 @@
 
 	# SSL Server Key Certificate
 	;CertFile = :ETCDIR:/ssl/server-cert.pem
-	CertFile = /etc/letsencrypt/live/irc.local/fullchain.pem
+	CertFile = /certs/fullchain.pem
 
 	# Select cipher suites allowed for SSL/TLS connections. This defaults
 	# to HIGH:!aNULL:@STRENGTH (OpenSSL) or SECURE128 (GnuTLS).
@@ -302,11 +302,11 @@
 
 	# Diffie-Hellman parameters
 	;DHFile = :ETCDIR:/ssl/dhparams.pem
-	DHFile = /config/dhparams.pem
+	DHFile = /certs/dhparams.pem
 
 	# SSL Server Key
 	;KeyFile = :ETCDIR:/ssl/server-key.pem
-	KeyFile = /etc/letsencrypt/live/irc.local/privkey.pem
+	KeyFile = /certs/privkey.pem
 
 	# password to decrypt SSLKeyFile (OpenSSL only)
 	;KeyFilePassword = secret
