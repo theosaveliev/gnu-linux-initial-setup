@@ -30,4 +30,7 @@ thelounge_port: "9000"
 
 # ngircd_install, thelounge_install
 docker_cli: /usr/bin/docker
+
+# thelounge_telegram_accounts
+thelounge_telegram_accounts_image: "nett/thelounge-telegram-accounts:0.1.0"
 ...

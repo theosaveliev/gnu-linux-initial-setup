@@ -12,4 +12,5 @@
     - { role: thelounge_install, tags: thelounge_install }
     - { role: thelounge_themes, tags: thelounge_themes }
     - { role: thelounge_users, tags: thelounge_users }
+    - { role: thelounge_telegram_accounts, tags: thelounge_telegram_accounts }
 ...

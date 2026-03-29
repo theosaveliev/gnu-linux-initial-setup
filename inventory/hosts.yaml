@@ -4,6 +4,8 @@ all:
     local-vm:
       ansible_host: "192.168.64.17"
       irc_domain: "irc.local"
+      thelounge_telegram_accounts:
+        group_add: "996"
       thelounge_users:
         - { user: "test", password: "test" }
 
@@ -13,6 +15,8 @@ all:
       ansible_connection: local
       ansible_user: username
       ansible_python_interpreter: /home/username/.ansible/python/.venv/bin/python
+      thelounge_telegram_accounts:
+        user: root
       thelounge_users:
         - { user: "test", password: "test" }
 ...
