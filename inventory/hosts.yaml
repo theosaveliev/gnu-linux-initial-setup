@@ -6,8 +6,6 @@ all:
       irc_domain: "irc.local"
       thelounge_telegram_accounts:
         group_add: "996"
-      thelounge_users:
-        - { user: "test", password: "test" }
 
     laptop:
       ansible_host: localhost
@@ -17,6 +15,4 @@ all:
       ansible_python_interpreter: /home/username/.ansible/python/.venv/bin/python
       thelounge_telegram_accounts:
         user: root
-      thelounge_users:
-        - { user: "test", password: "test" }
 ...

@@ -33,4 +33,6 @@ docker_cli: /usr/bin/docker
 
 # thelounge_telegram_accounts
 thelounge_telegram_accounts_image: "nett/thelounge-telegram-accounts:0.1.0"
+thelounge_users:
+  - { user: "test", password: "test" }
 ...
