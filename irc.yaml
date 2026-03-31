@@ -12,14 +12,24 @@
     webroot_domain: "{{ irc_domain }}"
     nginx_vhosts:
       - listen: "80"
-        server_name: "{{ irc_domain }}"
         root: "/var/www/{{ irc_domain }}"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
         filename: "irc.temp.conf"
         state: "present"
 
       - listen: "80"
         server_name: "{{ irc_domain }} www.{{ irc_domain }}"
-        filename: "{{ irc_domain }}.redirect.conf"
+        filename: "{{ irc_domain }}.80.conf"
+        state: "absent"
+
+      - listen: "443 ssl"
+        server_name: "www.{{ irc_domain }}"
+        filename: "{{ irc_domain }}.www.443.conf"
+        state: "absent"
+
+      - listen: "443 ssl"
+        server_name: "{{ irc_domain }}"
+        filename: "{{ irc_domain }}.443.conf"
         state: "absent"
 
     certbot_certs:
@@ -28,6 +38,7 @@
         webroot: "/var/www/{{ irc_domain }}"
         domains:
           - "{{ irc_domain }}"
+          - "www.{{ irc_domain }}"
   roles:
     - { role: webroot_create, tags: webroot_create }
     - { role: geerlingguy.nginx, tags: nginx_temp_vhost }
@@ -40,21 +51,36 @@
   vars:
     nginx_vhosts:
       - listen: "80"
-        server_name: "{{ irc_domain }}"
-        root: "/var/www/{{ irc_domain }}"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
         filename: "irc.temp.conf"
         state: "absent"
 
       - listen: "80"
         server_name: "{{ irc_domain }} www.{{ irc_domain }}"
-        filename: "{{ irc_domain }}.redirect.conf"
-        return: "301 https://{{ irc_domain }}$request_uri"
+        filename: "{{ irc_domain }}.80.conf"
         state: "present"
+        extra_parameters: |
+          location /.well-known/acme-challenge/ {
+            root /var/www/{{ irc_domain }};
+          }
+
+          location / {
+            return 301 https://{{ irc_domain }}$request_uri;
+          }
+
+      - listen: "443 ssl"
+        server_name: "www.{{ irc_domain }}"
+        filename: "{{ irc_domain }}.www.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ irc_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ irc_domain }}/privkey.pem;
+
+          return 301 https://{{ irc_domain }}$request_uri;
 
       - listen: "443 ssl"
         server_name: "{{ irc_domain }}"
-        root: "/var/www/{{ irc_domain }}"
-        filename: "{{ irc_domain }}.conf"
+        filename: "{{ irc_domain }}.443.conf"
         state: "present"
         extra_parameters: |
           ssl_certificate     /etc/letsencrypt/live/{{ irc_domain }}/fullchain.pem;
