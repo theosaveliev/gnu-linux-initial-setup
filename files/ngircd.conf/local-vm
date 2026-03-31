@@ -225,7 +225,7 @@
 
 	# Mask IRC Operator mode requests as if they were coming from the
 	# server? (This is a compatibility hack for ircd-irc2 servers)
-	OperServerMode = no
+	OperServerMode = yes
 
 	# Use PAM if ngIRCd has been compiled with support for it.
 	# Users identified using PAM are registered without the "~" character
@@ -396,10 +396,10 @@
 	# There may be more than one [Channel] block, one for each channel.
 
 	# Name of the channel
-	Name = #general
+	Name = #welcome
 
 	# Topic for this channel
-	Topic = General discussion
+	Topic = Welcome aboard!
 
 	# Initial channel modes, as used in "MODE" commands. Modifying lists
 	# (ban list, invite list, exception list) is supported.
@@ -416,9 +416,9 @@
 	# Default: none.
 	;KeyFile = :ETCDIR:/#chan.key
 
-[Channel]
-	Name = #test
-	Topic = test
-	Modes = +nk test
+; [Channel]
+; 	Name = #test
+; 	Topic = test
+; 	Modes = +nk test
 
 # -eof-

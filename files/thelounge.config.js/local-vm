@@ -249,7 +249,7 @@ module.exports = {
         password: "<password>",
         tls: true,
         rejectUnauthorized: true,
-        nick: "",
+        nick: "guest",
         username: "",
         realname: "",
         join: "",
