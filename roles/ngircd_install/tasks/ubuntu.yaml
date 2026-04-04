@@ -16,6 +16,13 @@
     masked: false
     daemon_reload: true
 
+- name: Wait for ngircd to be ready
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ ngircd_tls_port }}"
+    timeout: 300
+    state: started
+
 - name: Install irssi
   ansible.builtin.apt:
     state: present

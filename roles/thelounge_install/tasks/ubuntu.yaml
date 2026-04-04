@@ -15,4 +15,11 @@
     enabled: true
     masked: false
     daemon_reload: true
+
+- name: Wait for thelounge to be ready
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ thelounge_port }}"
+    timeout: 300
+    state: started
 ...

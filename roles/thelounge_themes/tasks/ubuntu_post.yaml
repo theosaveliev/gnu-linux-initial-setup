@@ -1,0 +1,9 @@
+---
+- name: Restart thelounge
+  ansible.builtin.systemd_service:
+    name: thelounge.service
+    state: restarted
+    enabled: true
+    masked: false
+    daemon_reload: true
+...
