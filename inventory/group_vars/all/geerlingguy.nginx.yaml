@@ -53,7 +53,7 @@ nginx_extra_http_options: |
   ssl_prefer_server_ciphers off;
 # yamllint enable rule:line-length
 
-nginx_remove_default_vhost: false
+nginx_remove_default_vhost: true
 
 # Listen on IPv6 (default: true)
 nginx_listen_ipv6: false

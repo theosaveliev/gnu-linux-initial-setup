@@ -11,7 +11,7 @@
     - { role: ngircd_install, tags: ngircd_install }
     - { role: thelounge_install, tags: thelounge_install }
     - { role: thelounge_themes, tags: thelounge_themes }
-    - { role: thelounge_users_init, tags: thelounge_users_init }
     - { role: thelounge_users_copy, tags: thelounge_users_copy }
+    - { role: thelounge_users_init, tags: thelounge_users_init }
     - { role: thelounge_telegram_accounts, tags: thelounge_telegram_accounts }
 ...
