@@ -9,12 +9,12 @@ services:
     volumes:
       - ./config:/config:rw
       - ./certs:/certs:ro
-      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg-inverted.svg
-      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg.svg
-      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-transparent-bg-inverted.svg
-      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-transparent-bg.svg
-      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-vertical-transparent-bg-inverted.svg
-      - ./wigwam-tipi-svgrepo-com.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg
+      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg-inverted.svg
+      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg.svg
+      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg-inverted.svg
+      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg.svg
+      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg-inverted.svg
+      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg
     ports:
       - "{{ thelounge_port }}:{{ thelounge_port }}"
     networks:

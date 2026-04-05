@@ -23,8 +23,8 @@
 
 - name: Copy logo svg
   ansible.builtin.copy:
-    src: "wigwam-tipi-svgrepo-com.svg"
-    dest: "{{ ansible_facts['user_dir'] }}/thelounge/wigwam-tipi-svgrepo-com.svg"
+    src: "thelounge_logo.svg"
+    dest: "{{ ansible_facts['user_dir'] }}/thelounge/thelounge_logo.svg"
     owner: "{{ ansible_user }}"
     mode: "0444"
     force: true
