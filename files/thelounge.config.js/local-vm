@@ -190,7 +190,7 @@ module.exports = {
     // Set `socket.io` transports.
     //
     // This value is set to `["polling", "websocket"]` by default.
-    transports: ["polling", "websocket"],
+    transports: ["polling"],
     // ### `leaveMessage`
     //
     // Set users' default `quit` and `part` messages if they are not providing
