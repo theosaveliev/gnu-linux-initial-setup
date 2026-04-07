@@ -1,0 +1,36 @@
+---
+services:
+  filebrowser:
+    image: "{{ filebrowser_image }}"
+    container_name: filebrowser
+    volumes:
+      - ./config:/config:ro
+      - ./branding:/branding:ro
+
+    tmpfs:
+      - "/database:size={{ filebrowser_misc_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
+      - "/data:size={{ filebrowser_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
+
+    ports:
+      - "{{ filebrowser_port }}:{{ filebrowser_port }}"
+
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    entrypoint: 
+      - /bin/sh
+      - -c
+      - |
+        filebrowser --config /config/settings.json config import /config/db.settings.json
+        filebrowser --config /config/settings.json users import /config/users.json
+        filebrowser --config /config/settings.json
+
+    healthcheck:
+      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(filebrowser_port | int) }} ' /proc/net/tcp || grep -q ':{{ "%04X" | format(filebrowser_port | int) }} ' /proc/net/tcp6"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+    restart: always
+...

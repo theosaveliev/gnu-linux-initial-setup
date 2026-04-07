@@ -1,0 +1,16 @@
+---
+- name: Install rsync
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name: rsync
+
+- name: Stop thelounge
+  ansible.builtin.systemd_service:
+    name: thelounge.service
+    state: stopped
+    enabled: true
+    masked: false
+    daemon_reload: true
+...

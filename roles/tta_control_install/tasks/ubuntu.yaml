@@ -1,0 +1,32 @@
+---
+- name: Template systemd service
+  ansible.builtin.template:
+    src: tta.control.service.j2
+    dest: /etc/systemd/system/tta-control.service
+    owner: root
+    group: root
+    mode: "0644"
+    force: true
+
+- name: Start tta_control
+  ansible.builtin.systemd_service:
+    name: tta-control.service
+    state: restarted
+    enabled: true
+    masked: false
+    daemon_reload: true
+
+- name: Wait for tta_control to be ready
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ tta_control_port }}"
+    timeout: 300
+    state: started
+
+- name: Install sqlite
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name: sqlite3
+...

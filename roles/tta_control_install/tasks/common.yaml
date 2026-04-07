@@ -1,0 +1,27 @@
+---
+- name: Ensure tta_control directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/tta_control/data/{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+  loop:
+    - thelounge
+    - filebrowser
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: tta.control.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/tta_control/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy control env
+  ansible.builtin.copy:
+    src: "tta.control.env/{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/tta_control/control.env"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

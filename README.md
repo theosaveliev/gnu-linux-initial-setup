@@ -14,8 +14,8 @@ Tested OS: Ubuntu 22.04 LTS, 24.04 LTS
 #### Playbook
 
 ```
-% ansible-playbook system.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=local-vm" 
-% ansible-playbook system.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=local-vm" -t sysctl_net
+% ansible-playbook system.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=local-vm"
+% ansible-playbook docker.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=local-vm"
 ```
 
 

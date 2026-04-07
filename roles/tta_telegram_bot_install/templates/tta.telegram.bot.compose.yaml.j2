@@ -1,0 +1,27 @@
+---
+services:
+  tta_telegram_bot:
+    image: "{{ tta_telegram_bot_image }}"
+    container_name: tta_telegram_bot
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    volumes:
+      - ./data:/app/data:rw
+
+    env_file:
+      - ./telegram.env
+
+    ports:
+      - "{{ tta_telegram_bot_port }}:{{ tta_telegram_bot_port }}"
+
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:{{ tta_telegram_bot_port }}/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+    restart: always
+...

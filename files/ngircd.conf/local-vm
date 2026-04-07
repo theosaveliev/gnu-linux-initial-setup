@@ -121,7 +121,7 @@
 	# Maximum length of an user nickname (Default: 9, as in RFC 2812).
 	# Please note that all servers in an IRC network MUST use the same
 	# maximum nickname length!
-	MaxNickLength = 30
+	MaxNickLength = 31
 
 	# Maximum penalty time increase in seconds, per penalty event. Set to -1
 	# for no limit (the default), 0 to disable penalties altogether. The
@@ -190,7 +190,7 @@
 	# Default user mode(s) to set on new local clients. Please note that
 	# only modes can be set that the client could set using regular MODE
 	# commands, you can't set "a" (away) for example! Default: none.
-	DefaultUserModes = i
+	; DefaultUserModes = i
 
 	# Do DNS lookups when a client connects to the server.
 	DNS = no

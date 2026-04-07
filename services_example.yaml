@@ -1,0 +1,28 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: false
+  gather_facts: true
+
+- name: Copy ngircd certs
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  vars:
+    service_name: ngircd
+    service_domain: "{{ irc_domain }}"
+  roles:
+    - { role: post_renewal_script, tags: ngircd_post_renewal }
+
+- name: Install services
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  roles:
+    - { role: ngircd_install, tags: ngircd_install }
+    - { role: thelounge_install, tags: thelounge_install }
+    - { role: thelounge_themes, tags: thelounge_themes }
+    - { role: filebrowser_install, tags: filebrowser_install }
+    - { role: tta_control_install, tags: tta_control_install }
+    - { role: tta_telegram_bot_install, tags: tta_telegram_bot_install }
+...

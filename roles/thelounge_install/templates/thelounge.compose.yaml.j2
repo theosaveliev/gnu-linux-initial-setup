@@ -4,28 +4,33 @@ services:
     image: "{{ thelounge_image }}"
     container_name: thelounge
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID={{ docker_run_as.user }}
+      - PGID={{ docker_run_as.group }}
+
     volumes:
       - ./config:/config:rw
-      - ./certs:/certs:ro
       - ./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg-inverted.svg
       - ./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg.svg
       - ./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg-inverted.svg
       - ./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg.svg
       - ./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg-inverted.svg
       - ./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg
+
     ports:
       - "{{ thelounge_port }}:{{ thelounge_port }}"
+
     networks:
       - irc-net
+
     healthcheck:
       test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(thelounge_port | int) }} ' /proc/net/tcp"]
       interval: 30s
       timeout: 2s
       retries: 3
       start_period: 10s
+
     restart: always
+
 networks:
   irc-net:
     external: true

@@ -1,0 +1,43 @@
+---
+- name: Ensure filebrowser directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/filebrowser/{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+  loop:
+    - config
+    - branding
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: filebrowser.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/filebrowser/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy settings json
+  ansible.builtin.copy:
+    src: "filebrowser.settings.json/{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/filebrowser/config/settings.json"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy db settings json
+  ansible.builtin.copy:
+    src: "filebrowser.db.settings.json/{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/filebrowser/config/db.settings.json"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy branding
+  ansible.builtin.copy:
+    src: "filebrowser.branding/"
+    dest: "{{ ansible_facts['user_dir'] }}/filebrowser/branding/"
+    owner: "{{ ansible_user }}"
+    mode: preserve
+    force: true
+...

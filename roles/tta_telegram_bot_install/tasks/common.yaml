@@ -1,0 +1,24 @@
+---
+- name: Ensure tta_telegram_bot directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/tta_telegram_bot/data"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: tta.telegram.bot.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/tta_telegram_bot/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy telegram env
+  ansible.builtin.copy:
+    src: "tta.telegram.bot.env/{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/tta_telegram_bot/telegram.env"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

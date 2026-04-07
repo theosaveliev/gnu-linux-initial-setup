@@ -1,0 +1,305 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: false
+  gather_facts: true
+
+- name: Create temporary HTTP vhost, request TLS certs
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  vars:
+    webroot_domain:
+      - "{{ irc_domain }}"
+      - "{{ files_domain }}"
+      - "{{ control_domain }}"
+      - "{{ bot_domain }}"
+
+    nginx_vhosts:
+      - listen: "80"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "irc.temp.conf"
+        state: "present"
+
+      - listen: "80"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
+        filename: "{{ irc_domain }}.80.conf"
+        state: "absent"
+
+      - listen: "443 ssl"
+        server_name: "www.{{ irc_domain }}"
+        filename: "{{ irc_domain }}.www.443.conf"
+        state: "absent"
+
+      - listen: "443 ssl"
+        server_name: "{{ irc_domain }}"
+        filename: "{{ irc_domain }}.443.conf"
+        state: "absent"
+
+      - listen: "80"
+        server_name: "{{ files_domain }} www.{{ files_domain }}"
+        root: "/var/www/{{ files_domain }}"
+        filename: "files.temp.conf"
+        state: "present"
+
+      - listen: "80"
+        server_name: "{{ files_domain }} www.{{ files_domain }}"
+        filename: "{{ files_domain }}.80.conf"
+        state: "absent"
+
+      - listen: "443 ssl"
+        server_name: "www.{{ files_domain }}"
+        filename: "{{ files_domain }}.www.443.conf"
+        state: "absent"
+
+      - listen: "443 ssl"
+        server_name: "{{ files_domain }}"
+        filename: "{{ files_domain }}.443.conf"
+        state: "absent"
+
+      - listen: "80"
+        server_name: "{{ control_domain }}"
+        root: "/var/www/{{ control_domain }}"
+        filename: "{{ control_domain }}.80.conf"
+        state: "present"
+        extra_parameters: |
+          location /.well-known/acme-challenge/ {
+            root /var/www/{{ control_domain }};
+          }
+
+          location / {
+            return 403;
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ control_domain }}"
+        filename: "{{ control_domain }}.443.conf"
+        state: "absent"
+
+      - listen: "80"
+        server_name: "{{ bot_domain }}"
+        root: "/var/www/{{ bot_domain }}"
+        filename: "{{ bot_domain }}.80.conf"
+        state: "present"
+        extra_parameters: |
+          location /.well-known/acme-challenge/ {
+            root /var/www/{{ bot_domain }};
+          }
+
+          location / {
+            return 403;
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ bot_domain }}"
+        filename: "{{ bot_domain }}.443.conf"
+        state: "absent"
+
+    certbot_certs:
+      - name: "{{ irc_domain }}"
+        email: "{{ certbot_admin_email }}"
+        webroot: "/var/www/{{ irc_domain }}"
+        domains:
+          - "{{ irc_domain }}"
+          - "www.{{ irc_domain }}"
+
+      - name: "{{ files_domain }}"
+        email: "{{ certbot_admin_email }}"
+        webroot: "/var/www/{{ files_domain }}"
+        domains:
+          - "{{ files_domain }}"
+          - "www.{{ files_domain }}"
+
+      - name: "{{ control_domain }}"
+        email: "{{ certbot_admin_email }}"
+        webroot: "/var/www/{{ control_domain }}"
+        domains:
+          - "{{ control_domain }}"
+
+      - name: "{{ bot_domain }}"
+        email: "{{ certbot_admin_email }}"
+        webroot: "/var/www/{{ bot_domain }}"
+        domains:
+          - "{{ bot_domain }}"
+
+  roles:
+    - { role: webroot_create, tags: webroot_create }
+    - { role: www_group, tags: www_group }
+    - { role: geerlingguy.nginx, tags: nginx_temp_vhost }
+    - { role: geerlingguy.certbot, tags: certbot_certs }
+
+
+- name: Start nginx
+  hosts: "{{ target_hosts | default('local-vm') }}"
+  become: true
+  gather_facts: false
+  vars:
+    nginx_vhosts:
+      - listen: "80"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
+        filename: "irc.temp.conf"
+        state: "absent"
+
+      - listen: "80"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "{{ irc_domain }}.80.conf"
+        state: "present"
+        extra_parameters: |
+          location /.well-known/acme-challenge/ {
+            root /var/www/{{ irc_domain }};
+          }
+
+          location / {
+            return 301 https://{{ irc_domain }}$request_uri;
+          }
+
+      - listen: "443 ssl"
+        server_name: "www.{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "{{ irc_domain }}.www.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ irc_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ irc_domain }}/privkey.pem;
+
+          return 301 https://{{ irc_domain }}$request_uri;
+
+      - listen: "443 ssl"
+        server_name: "{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "{{ irc_domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ irc_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ irc_domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ thelounge_port }};
+            proxy_http_version 1.1;
+            proxy_request_buffering off;
+            proxy_buffering off;
+            proxy_max_temp_file_size 0;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Connection "keep-alive";
+            proxy_socket_keepalive on;
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 86400;
+          }
+
+      - listen: "80"
+        server_name: "{{ files_domain }} www.{{ files_domain }}"
+        filename: "files.temp.conf"
+        state: "absent"
+
+      - listen: "80"
+        server_name: "{{ files_domain }} www.{{ files_domain }}"
+        root: "/var/www/{{ files_domain }}"
+        filename: "{{ files_domain }}.80.conf"
+        state: "present"
+        extra_parameters: |
+          location /.well-known/acme-challenge/ {
+            root /var/www/{{ files_domain }};
+          }
+
+          location / {
+            return 301 https://{{ files_domain }}$request_uri;
+          }
+
+      - listen: "443 ssl"
+        server_name: "www.{{ files_domain }}"
+        root: "/var/www/{{ files_domain }}"
+        filename: "{{ files_domain }}.www.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ files_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ files_domain }}/privkey.pem;
+
+          return 301 https://{{ files_domain }}$request_uri;
+
+      - listen: "443 ssl"
+        server_name: "{{ files_domain }}"
+        root: "/var/www/{{ files_domain }}"
+        filename: "{{ files_domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ files_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ files_domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ filebrowser_port }};
+            proxy_http_version 1.1;
+            proxy_request_buffering off;
+            proxy_buffering off;
+            proxy_max_temp_file_size 0;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Connection "keep-alive";
+            proxy_socket_keepalive on;
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 86400;
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ control_domain }}"
+        root: "/var/www/{{ control_domain }}"
+        filename: "{{ control_domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ control_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ control_domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ tta_control_port }};
+            proxy_http_version 1.1;
+            proxy_request_buffering off;
+            proxy_buffering off;
+            proxy_max_temp_file_size 0;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Connection "keep-alive";
+            proxy_socket_keepalive on;
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 86400;
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ bot_domain }}"
+        root: "/var/www/{{ bot_domain }}"
+        filename: "{{ bot_domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ bot_domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ bot_domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ tta_telegram_bot_port }};
+            proxy_http_version 1.1;
+            proxy_request_buffering off;
+            proxy_buffering off;
+            proxy_max_temp_file_size 0;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Connection "keep-alive";
+            proxy_socket_keepalive on;
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 86400;
+          }
+
+  roles:
+    - { role: geerlingguy.nginx, tags: nginx_tls }
+...

@@ -23,9 +23,9 @@ nginx_vhost_template: "vhost.j2"
 
 nginx_worker_processes: "{{ ansible_facts['processor_vcpus'] | default(ansible_facts['processor_count']) }}"
 nginx_worker_connections: "1024"
-nginx_multi_accept: "off"
+nginx_multi_accept: "on"
 
-nginx_error_log: "syslog:server=unix:/dev/log warn"
+nginx_error_log: "syslog:server=unix:/dev/log info"
 nginx_access_log: "syslog:server=unix:/dev/log main"
 
 nginx_sendfile: "on"
@@ -37,7 +37,7 @@ nginx_keepalive_requests: "600"
 
 nginx_server_tokens: "on"
 
-nginx_client_max_body_size: "64m"
+nginx_client_max_body_size: "11M"
 
 nginx_server_names_hash_bucket_size: "64"
 

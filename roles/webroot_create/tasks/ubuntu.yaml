@@ -1,25 +1,20 @@
 ---
 - name: Create directories
   ansible.builtin.file:
-    path: "/var/www/{{ webroot_domain }}"
+    path: "/var/www/{{ item }}"
     state: directory
     owner: www-data
     group: www-data
-    mode: "0775"
+    mode: "0770"
+  loop: "{{ webroot_domain }}"
 
 - name: Copy stub page
   ansible.builtin.copy:
     src: "webroot.index.html"
-    dest: "/var/www/{{ webroot_domain }}/index.html"
+    dest: "/var/www/{{ item }}/index.html"
     owner: www-data
     group: www-data
-    mode: "0644"
+    mode: "0640"
     force: true
-
-- name: Add ansible_user to the www-data group
-  ansible.builtin.user:
-    name: "{{ ansible_user }}"
-    groups: www-data
-    append: true
-    state: present
+  loop: "{{ webroot_domain }}"
 ...

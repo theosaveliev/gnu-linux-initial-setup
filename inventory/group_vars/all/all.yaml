@@ -28,11 +28,20 @@ ngircd_tls_port: "6697"
 thelounge_image: "linuxserver/thelounge:4.4.3"
 thelounge_port: "9000"
 
-# ngircd_install, thelounge_install
+# ngircd_install, thelounge_install, filebrowser_install, tta_control_install, tta_telegram_bot_install
 docker_cli: /usr/bin/docker
 
-# thelounge_telegram_accounts
-thelounge_telegram_accounts_image: "nett/thelounge-telegram-accounts:0.1.0"
-thelounge_users:
-  - { user: "test", password: "test" }
+# filebrowser_install
+filebrowser_image: "filebrowser/filebrowser:v2.63.1"
+filebrowser_port: "10000"
+filebrowser_volume_size: "100M"
+filebrowser_misc_volume_size: "100M"
+
+# tta_control_install
+tta_control_image: "nett/tta-control:0.2.0"
+tta_control_port: "8001"
+
+# tta_telegram_bot_install
+tta_telegram_bot_image: "nett/tta-telegram-bot:0.2.0"
+tta_telegram_bot_port: "8002"
 ...

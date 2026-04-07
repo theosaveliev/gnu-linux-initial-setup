@@ -32,8 +32,10 @@ table inet firewall {
 		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 meter docker_https_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
 		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 443 counter log prefix "docker-https-rate-limit: " drop
 		# ngircd
-		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 6697 meter docker_ircd_6697_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
-		iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 6697 counter log prefix "docker-ircd-6697-rate-limit: " drop
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 6697 meter docker_ircd_6697_rate { ip saddr limit rate 100/minute burst 200 packets } counter accept
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 6697 counter log prefix "docker-ircd-6697-rate-limit: " drop
+		# vpn
+		# iifname enp0s1 ip daddr 172.17.0.0/12 ct state new ct original proto-dst 50000 counter accept
 		# docker
 		ip saddr 172.16.0.0/12 ct state new counter accept
 		counter comment "packets reached the end of the chain"

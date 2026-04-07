@@ -72,10 +72,10 @@ module.exports = {
     // The value of `enable` is set to `false` to disable HTTPS by default, in
     // which case the other two string settings are ignored.
     https: {
-        enable: true,
-        key: "/certs/privkey.pem",
-        certificate: "/certs/fullchain.pem",
-        ca: "",
+        enable: false,
+        // key: "/certs/privkey.pem",
+        // certificate: "/certs/fullchain.pem",
+        // ca: "",
     },
     // ## Client settings
     // ### `theme`
@@ -249,7 +249,7 @@ module.exports = {
         password: "<password>",
         tls: true,
         rejectUnauthorized: true,
-        nick: "guest",
+        nick: "Guest",
         username: "",
         realname: "",
         join: "",

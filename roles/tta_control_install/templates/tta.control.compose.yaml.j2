@@ -1,0 +1,27 @@
+---
+services:
+  tta_control:
+    image: "{{ tta_control_image }}"
+    container_name: tta_control
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    volumes:
+      - ./data:/app/data:rw
+
+    env_file:
+      - ./control.env
+
+    ports:
+      - "{{ tta_control_port }}:{{ tta_control_port }}"
+
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:{{ tta_control_port }}/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+    restart: always
+...

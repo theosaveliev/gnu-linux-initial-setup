@@ -1,0 +1,14 @@
+[Unit]
+Description=tta-control
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory={{ ansible_facts['user_dir'] }}/tta_control
+ExecStart={{ docker_cli }} compose -f compose.yaml up
+ExecStop={{ docker_cli }} compose -f compose.yaml down
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

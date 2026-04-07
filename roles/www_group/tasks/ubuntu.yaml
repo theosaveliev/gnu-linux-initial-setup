@@ -1,0 +1,8 @@
+---
+- name: Add ansible_user to the www-data group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: www-data
+    append: true
+    state: present
+...
