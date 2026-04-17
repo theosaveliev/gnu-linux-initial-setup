@@ -6,10 +6,8 @@ services:
     volumes:
       - ./config:/config:ro
       - ./branding:/branding:ro
-
-    tmpfs:
-      - "/database:size={{ filebrowser_misc_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
-      - "/data:size={{ filebrowser_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
+      - filebrowser-database:/database
+      - filebrowser-data:/data
 
     ports:
       - "{{ filebrowser_port }}:{{ filebrowser_port }}"
@@ -32,5 +30,21 @@ services:
       timeout: 2s
       retries: 3
       start_period: 10s
+
     restart: always
+
+volumes:
+  filebrowser-database:
+    driver: local
+    driver_opts:
+      type: "tmpfs"
+      device: "tmpfs"
+      o: "size={{ filebrowser_misc_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
+
+  filebrowser-data:
+    driver: local
+    driver_opts:
+      type: "tmpfs"
+      device: "tmpfs"
+      o: "size={{ filebrowser_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
 ...

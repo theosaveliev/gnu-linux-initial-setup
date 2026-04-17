@@ -9,10 +9,18 @@
     - config
     - branding
 
-- name: Template compose file
+- name: Template filebrowser compose file
   ansible.builtin.template:
     src: filebrowser.compose.yaml.j2
     dest: "{{ ansible_facts['user_dir'] }}/filebrowser/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Template filebrowser mnt compose file
+  ansible.builtin.template:
+    src: filebrowser.mnt.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/filebrowser/compose-mnt.yaml"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true

@@ -1,8 +1,17 @@
 ---
-- name: Template systemd service
+- name: Template filebrowser systemd service
   ansible.builtin.template:
     src: filebrowser.service.j2
     dest: /etc/systemd/system/filebrowser.service
+    owner: root
+    group: root
+    mode: "0644"
+    force: true
+
+- name: Template filebrowser mnt systemd service
+  ansible.builtin.template:
+    src: filebrowser.mnt.service.j2
+    dest: /etc/systemd/system/filebrowser-mnt.service
     owner: root
     group: root
     mode: "0644"

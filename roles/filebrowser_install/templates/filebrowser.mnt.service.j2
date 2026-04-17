@@ -1,11 +1,11 @@
 [Unit]
-Description=filebrowser
+Description=filebrowser-mnt
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=simple
 WorkingDirectory={{ ansible_facts['user_dir'] }}/filebrowser
-ExecStart={{ docker_cli }} compose -f compose.yaml up
-ExecStop={{ docker_cli }} compose -f compose.yaml down
+ExecStart={{ docker_cli }} compose -f compose-mnt.yaml up
+ExecStop={{ docker_cli }} compose -f compose-mnt.yaml down
 Restart=always

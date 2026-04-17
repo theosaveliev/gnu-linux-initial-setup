@@ -1,0 +1,29 @@
+---
+services:
+  filebrowser_mnt:
+    image: "ubuntu:noble"
+    container_name: filebrowser-mnt
+    volumes:
+      - filebrowser_filebrowser-database:/database
+      - filebrowser_filebrowser-data:/data
+
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    entrypoint: 
+      - sleep
+      - infinity
+
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+
+    restart: always
+
+volumes:
+  filebrowser_filebrowser-database:
+    external: true
+
+  filebrowser_filebrowser-data:
+    external: true
+...
