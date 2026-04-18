@@ -42,11 +42,11 @@ filebrowser_misc_volume_size: "100M"
 
 # tta_control_install
 # https://hub.docker.com/r/nett/tta-control/tags
-tta_control_image: "nett/tta-control:0.2.1"
+tta_control_image: "nett/tta-control:0.2.2"
 tta_control_port: "8001"
 
 # tta_telegram_bot_install
 # https://hub.docker.com/r/nett/tta-telegram-bot/tags
-tta_telegram_bot_image: "nett/tta-telegram-bot:0.2.1"
+tta_telegram_bot_image: "nett/tta-telegram-bot:0.2.2"
 tta_telegram_bot_port: "8002"
 ...
