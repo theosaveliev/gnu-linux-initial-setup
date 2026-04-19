@@ -1,0 +1,37 @@
+---
+services:
+  transmission:
+    image: "{{ transmission_image }}"
+    container_name: transmission
+    volumes:
+      - ./config:/config:rw
+      - filebrowser_filebrowser-data:/downloads
+
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    ports:
+      - "{{ transmission_rpc_port }}:{{ transmission_rpc_port }}"
+      - "{{ transmission_peer_port }}:{{ transmission_peer_port }}"
+      - "{{ transmission_peer_port }}:{{ transmission_peer_port }}/udp"
+
+    entrypoint: 
+      - /usr/bin/transmission-daemon
+      - -g
+      - /config
+      - -f
+
+    healthcheck:
+      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(transmission_rpc_port | int) }} ' /proc/net/tcp"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+    restart: always
+
+volumes:
+  filebrowser_filebrowser-data:
+    external: true
+...

@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+curl https://{{ control_domain }}/create_thelounge_user_files -H "Content-Type: application/json" -d '{"token": "{{ control_token }}"}'
+curl https://{{ control_domain }}/create_filebrowser_users_json -H "Content-Type: application/json" -d '{"token": "{{ control_token }}"}'
+
+mv tta_control/data/thelounge/* thelounge/config/users/
+mv tta_control/data/filebrowser/users.json filebrowser/config/
+
+sudo systemctl restart filebrowser

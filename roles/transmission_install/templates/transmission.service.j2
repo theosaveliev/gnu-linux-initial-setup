@@ -1,0 +1,11 @@
+[Unit]
+Description=transmission
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory={{ ansible_facts['user_dir'] }}/transmission
+ExecStart={{ docker_cli }} compose -f compose.yaml up
+ExecStop={{ docker_cli }} compose -f compose.yaml down
+Restart=always

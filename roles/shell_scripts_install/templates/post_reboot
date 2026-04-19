@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+
+sudo systemctl stop filebrowser
+sudo systemctl stop filebrowser-mnt
+sudo systemctl stop transmission
+
+docker compose -f filebrowser/compose.yaml down
+docker compose -f filebrowser/compose-mnt.yaml down
+docker compose -f transmission/compose.yaml down
+
+docker volume rm filebrowser_filebrowser-data
+docker volume rm filebrowser_filebrowser-database
+
+sqlite3 tta_control/{{ tta_control_users_db }} 'update filebrowser_accounts set notified=0;'
+curl https://{{ control_domain }}/create_filebrowser_users_json -H "Content-Type: application/json" -d '{"token": "{{ control_token }}"}'
+sqlite3 tta_control/{{ tta_control_users_db }} 'update filebrowser_accounts set notified=1;'
+mv tta_control/data/filebrowser/users.json filebrowser/config/
+
+sudo systemctl start filebrowser
+sudo systemctl start filebrowser-mnt
+sudo systemctl start transmission

@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+sudo timedatectl set-ntp no
+sudo timedatectl set-time "2026-04-19 04:39:00"
+
+sudo systemctl restart ngircd
+sudo systemctl restart thelounge
+sudo systemctl restart tta-control

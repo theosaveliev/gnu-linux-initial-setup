@@ -3,20 +3,9 @@ all:
   hosts:
     local-vm:
       ansible_host: "192.168.64.17"
-      irc_domain: "irc.local"
-      files_domain: "files.local"
-      control_domain: "control.local"
-      bot_domain: "bot.local"
-      docker_run_as:
-        user: "1000"
-        group: "1000"
 
     laptop:
       ansible_host: localhost
-      irc_domain: "irc.local"
-      files_domain: "files.local"
-      control_domain: "control.local"
-      bot_domain: "bot.local"
       ansible_connection: local
       ansible_user: user
       ansible_python_interpreter: /home/user/.ansible/python/.venv/bin/python

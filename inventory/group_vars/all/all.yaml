@@ -1,6 +1,9 @@
 ---
 ansible_user: ubuntu
 ansible_port: "2200"
+docker_run_as:
+  user: "1000"
+  group: "1000"
 
 # linux-system-roles.journald
 journald_persistent: true
@@ -40,13 +43,38 @@ filebrowser_port: "10000"
 filebrowser_volume_size: "100M"
 filebrowser_misc_volume_size: "100M"
 
+# transmission_install
+# https://hub.docker.com/r/linuxserver/transmission/tags
+transmission_image: "linuxserver/transmission:4.1.1"
+transmission_rpc_port: "9091"
+transmission_peer_port: "59710"
+
 # tta_control_install
 # https://hub.docker.com/r/nett/tta-control/tags
 tta_control_image: "nett/tta-control:0.2.3"
+tta_control_listen: "0.0.0.0"
 tta_control_port: "8001"
+tta_control_users_db: "data/users.sqlite3"
+tta_control_irc_user_dir: "data/thelounge"
+tta_control_files_user_dir: "data/filebrowser"
 
 # tta_telegram_bot_install
 # https://hub.docker.com/r/nett/tta-telegram-bot/tags
 tta_telegram_bot_image: "nett/tta-telegram-bot:0.2.3"
+tta_telegram_bot_listen: "0.0.0.0"
 tta_telegram_bot_port: "8002"
+tta_telegram_bot_api_id: ""
+tta_telegram_bot_api_hash: ""
+tta_telegram_bot_telegram_token: ""
+tta_telegram_bot_session: "data/bot"
+
+# shared
+irc_domain: "irc.local"
+irc_network_password: ""
+files_domain: "files.local"
+files_admin: ""
+control_domain: "control.local"
+control_token: ""
+bot_domain: "bot.local"
+bot_token: ""
 ...

@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+curl https://{{ control_domain }}/notify_thelounge_users -H "Content-Type: application/json" -d '{"token": "{{ control_token }}"}'
+curl https://{{ control_domain }}/notify_filebrowser_users -H "Content-Type: application/json" -d '{"token": "{{ control_token }}"}'

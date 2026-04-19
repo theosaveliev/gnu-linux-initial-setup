@@ -17,9 +17,9 @@
     mode: "0600"
     force: true
 
-- name: Copy control env
-  ansible.builtin.copy:
-    src: "tta.control.env/{{ ansible_facts['hostname'] }}"
+- name: Template control env
+  ansible.builtin.template:
+    src: "tta.control.env.j2"
     dest: "{{ ansible_facts['user_dir'] }}/tta_control/control.env"
     owner: "{{ ansible_user }}"
     mode: "0600"

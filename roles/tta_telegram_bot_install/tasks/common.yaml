@@ -14,9 +14,9 @@
     mode: "0600"
     force: true
 
-- name: Copy telegram env
-  ansible.builtin.copy:
-    src: "tta.telegram.bot.env/{{ ansible_facts['hostname'] }}"
+- name: Template telegram env
+  ansible.builtin.template:
+    src: "tta.telegram.bot.env.j2"
     dest: "{{ ansible_facts['user_dir'] }}/tta_telegram_bot/telegram.env"
     owner: "{{ ansible_user }}"
     mode: "0600"

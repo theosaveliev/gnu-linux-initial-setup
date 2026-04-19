@@ -1,0 +1,14 @@
+---
+- name: Template shell scripts
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ item }}"
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+    force: true
+  loop:
+    - move_accounts
+    - notify_users
+    - set_time
+    - post_reboot
+...

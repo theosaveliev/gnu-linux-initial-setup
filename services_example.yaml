@@ -23,6 +23,8 @@
     - { role: thelounge_install, tags: thelounge_install }
     - { role: thelounge_themes, tags: thelounge_themes }
     - { role: filebrowser_install, tags: filebrowser_install }
+    - { role: transmission_install, tags: transmission_install }
     - { role: tta_control_install, tags: tta_control_install }
     - { role: tta_telegram_bot_install, tags: tta_telegram_bot_install }
+    - { role: shell_scripts_install, tags: shell_scripts_install }
 ...
