@@ -121,7 +121,7 @@
 	# Maximum length of an user nickname (Default: 9, as in RFC 2812).
 	# Please note that all servers in an IRC network MUST use the same
 	# maximum nickname length!
-	MaxNickLength = 31
+	MaxNickLength = 32
 
 	# Maximum penalty time increase in seconds, per penalty event. Set to -1
 	# for no limit (the default), 0 to disable penalties altogether. The
@@ -150,7 +150,7 @@
 	# channels on the local server. By default, all supported channel
 	# types are allowed. Set this variable to the empty string to disallow
 	# creation of new channels by local clients at all.
-	AllowedChannelTypes = #
+	AllowedChannelTypes = #&
 
 	# Are remote IRC operators allowed to control this server, e.g.
 	# use commands like CONNECT, SQUIT, DIE, ...?
@@ -182,7 +182,7 @@
 
 	# Try to connect to other IRC servers using IPv4 and IPv6, if possible.
 	ConnectIPv6 = no
-	ConnectIPv4 = no
+	ConnectIPv4 = yes
 
 	# Default channel mode(s) to set on new channels. Default: none.
 	DefaultChannelModes = n
@@ -396,7 +396,7 @@
 	# There may be more than one [Channel] block, one for each channel.
 
 	# Name of the channel
-	Name = #welcome
+	Name = &welcome
 
 	# Topic for this channel
 	Topic = Welcome aboard!
