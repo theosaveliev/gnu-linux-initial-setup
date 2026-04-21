@@ -27,4 +27,5 @@
     - { role: tta_control_install, tags: tta_control_install }
     - { role: tta_telegram_bot_install, tags: tta_telegram_bot_install }
     - { role: shell_scripts_install, tags: shell_scripts_install }
+    - { role: mediawiki_install, tags: mediawiki_install }
 ...

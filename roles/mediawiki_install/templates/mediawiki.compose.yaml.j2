@@ -1,0 +1,27 @@
+---
+services:
+  mediawiki:
+    image: "{{ mediawiki_image }}"
+    container_name: mediawiki
+
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    volumes:
+      - ./www/data:/var/www/data:rw
+      - ./www/images:/var/www/html/images:rw
+      - ./www/LocalSettings.php:/var/www/html/LocalSettings.php
+
+    ports:
+      - "{{ mediawiki_port }}:80"
+
+    healthcheck:
+      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(80 | int) }} ' /proc/net/tcp"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+    restart: always
+...

@@ -31,7 +31,7 @@ ngircd_tls_port: "6697"
 # thelounge_install
 # https://hub.docker.com/r/linuxserver/thelounge/tags
 thelounge_image: "linuxserver/thelounge:4.4.3"
-thelounge_port: "9000"
+thelounge_port: "9001"
 
 # ngircd_install, thelounge_install, filebrowser_install, tta_control_install, tta_telegram_bot_install
 docker_cli: /usr/bin/docker
@@ -77,4 +77,7 @@ control_domain: "control.local"
 control_token: ""
 bot_domain: "bot.local"
 bot_token: ""
+mediawiki_domain: "wiki.local"
+mediawiki_image: "mediawiki:1.45.3"
+mediawiki_port: "9002"
 ...
