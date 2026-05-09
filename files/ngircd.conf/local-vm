@@ -67,7 +67,7 @@
 
 	# Global password for all users needed to connect to the server.
 	# (Default: not set)
-	Password = <password>
+	; Password =
 
 	# This tells ngIRCd to write its current process ID to a file.
 	# Note that the pidfile is written AFTER chroot and switching the

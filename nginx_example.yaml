@@ -376,11 +376,6 @@
           ssl_certificate     /etc/letsencrypt/live/{{ mediawiki_domain }}/fullchain.pem;
           ssl_certificate_key /etc/letsencrypt/live/{{ mediawiki_domain }}/privkey.pem;
 
-          location /yandex_42e13b745a26d2d2.html {
-            root /var/www/{{ mediawiki_domain }};
-            index index.html index.htm;
-          }
-
           location /robots.txt {
             root /var/www/{{ mediawiki_domain }};
             index index.html index.htm;
