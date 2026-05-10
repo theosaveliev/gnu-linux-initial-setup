@@ -38,7 +38,7 @@ docker_cli: /usr/bin/docker
 
 # filebrowser_install
 # https://hub.docker.com/r/filebrowser/filebrowser/tags
-filebrowser_image: "filebrowser/filebrowser:v2.63.2"
+filebrowser_image: "filebrowser/filebrowser:v2.63.3"
 filebrowser_port: "10000"
 filebrowser_volume_size: "100M"
 filebrowser_misc_volume_size: "100M"
@@ -68,6 +68,10 @@ tta_telegram_bot_api_hash: ""
 tta_telegram_bot_telegram_token: ""
 tta_telegram_bot_session: "data/bot"
 
+# https://hub.docker.com/_/mediawiki/tags
+mediawiki_image: "mediawiki:1.45.3"
+mediawiki_port: "9002"
+
 # shared
 irc_domain: "irc.local"
 irc_network_password: ""
@@ -78,6 +82,4 @@ control_token: ""
 bot_domain: "bot.local"
 bot_token: ""
 mediawiki_domain: "wiki.local"
-mediawiki_image: "mediawiki:1.45.3"
-mediawiki_port: "9002"
 ...
