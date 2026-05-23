@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+curl https://{{ tta_control_domain }}/list_users_pending -H "Content-Type: application/json" -d '{"token": "{{ tta_control_token }}"}'

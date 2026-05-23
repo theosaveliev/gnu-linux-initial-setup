@@ -1,0 +1,16 @@
+---
+- name: Install BIRD
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name: bird2
+
+- name: Enable and unmask BIRD
+  ansible.builtin.systemd_service:
+    name: bird.service
+    state: started
+    enabled: true
+    masked: false
+    daemon_reload: true
+...

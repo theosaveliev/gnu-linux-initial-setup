@@ -1,15 +1,9 @@
 ---
 all:
   hosts:
-    local-vm:
-      ansible_host: "192.168.64.17"
+    node1:
+      ansible_host: "172.16.200.1"
 
-    laptop:
-      ansible_host: localhost
-      ansible_connection: local
-      ansible_user: user
-      ansible_python_interpreter: /home/user/.ansible/python/.venv/bin/python
-      docker_run_as:
-        user: "501"
-        group: "20"
+    node2:
+      ansible_host: "172.16.300.1"
 ...

@@ -1,0 +1,56 @@
+#!/usr/sbin/nft -f
+
+table inet firewall
+delete table inet firewall
+
+table inet firewall {
+	chain input {
+		type filter hook input priority filter; policy drop;
+		# babel
+		iifname "br-mesh" udp dport 6696 counter accept
+
+		ct state invalid counter drop
+		ct state established,related counter accept
+		iifname "lo" counter accept
+		ip protocol icmp limit rate 100/second counter accept
+		ip protocol icmp counter log prefix "icmp-rate-limit: " drop
+		icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } limit rate 100/second counter accept
+		icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } counter log prefix "icmpv6-rate-limit: " drop
+
+		# ssh
+		iifname {"enp1s0", "enp2s0", "br-mesh"} ct state new tcp dport 2200 counter accept
+
+		# nginx
+		iifname {"enp1s0", "br-mesh"} ct state new tcp dport 80 counter accept
+		iifname {"enp1s0", "br-mesh"} ct state new tcp dport 443 counter accept
+
+		# dnsmasq
+		iifname "br-mesh" ct state new udp dport 67 counter accept
+		iifname "br-mesh" ct state new udp dport 53 counter accept
+		iifname "br-mesh" ct state new tcp dport 53 counter accept
+
+		iifname "enp1s0" counter log prefix "input-enp1s0-drop: " drop
+		iifname "enp2s0" counter log prefix "input-enp2s0-drop: " drop
+		iifname "br-mesh" counter log prefix "input-br-mesh-drop: " drop
+		counter comment "packets reached the end of the chain"
+	}
+
+	chain forward {
+		type filter hook forward priority filter; policy drop;
+		ct state invalid counter drop
+
+		# mesh
+		iifname "br-mesh" oifname "br-mesh" meter mesh_fwd { ip saddr limit rate 1000/second } counter accept
+		iifname "br-mesh" oifname "br-mesh" counter log prefix "mesh-fwd-rate-limit: " drop
+
+        ct state established,related counter accept
+
+		# docker
+		iifname != {"enp1s0", "enp2s0", "br-mesh"} ip saddr 172.16.0.0/12 ct state new counter accept
+
+		iifname "enp1s0" ct state new counter log prefix "forward-enp1s0-drop: " drop
+		iifname "enp2s0" ct state new counter log prefix "forward-enp2s0-drop: " drop
+		iifname "br-mesh" ct state new counter log prefix "forward-br-mesh-drop: " drop
+		counter comment "packets reached the end of the chain"
+	}
+}

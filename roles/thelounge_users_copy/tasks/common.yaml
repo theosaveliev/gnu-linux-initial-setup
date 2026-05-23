@@ -1,8 +1,8 @@
 ---
 - name: Replace users dir
   ansible.posix.synchronize:
-    src: thelounge.users/
-    dest: "{{ ansible_facts['user_dir'] }}/thelounge/config/users"
+    src: "{{ thelounge_name }}/users"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ thelounge_name }}/config/users"
     archive: true
     recursive: true
     delete: true
@@ -13,14 +13,14 @@
 
 - name: Update file ownership
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/thelounge/config/users"
+    path: "{{ ansible_facts['user_dir'] }}/{{ thelounge_name }}/config/users"
     owner: "{{ ansible_user }}"
     state: directory
     recurse: true
 
 - name: Update directory permissions
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/thelounge/config/users"
+    path: "{{ ansible_facts['user_dir'] }}/{{ thelounge_name }}/config/users"
     owner: "{{ ansible_user }}"
     state: directory
     mode: "0700"

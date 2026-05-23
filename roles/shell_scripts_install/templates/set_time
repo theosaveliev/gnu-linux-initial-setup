@@ -1,8 +1,14 @@
 #!/usr/bin/bash
 
 sudo timedatectl set-ntp no
-sudo timedatectl set-time "2026-04-19 04:39:00"
+sudo timedatectl set-time "{{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}"
 
-sudo systemctl restart ngircd
-sudo systemctl restart thelounge
-sudo systemctl restart tta-control
+{% if ngircd_name is defined %}
+sudo systemctl restart {{ ngircd_name }}
+{% endif %}
+
+{% if thelounge_name is defined %}
+sudo systemctl restart {{ thelounge_name }}
+{% endif %}
+
+sudo systemctl restart {{ tta_control_name }}

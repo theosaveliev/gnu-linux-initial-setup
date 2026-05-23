@@ -56,7 +56,7 @@ nginx_extra_http_options: |
 nginx_remove_default_vhost: true
 
 # Listen on IPv6 (default: true)
-nginx_listen_ipv6: false
+nginx_listen_ipv6: true
 
 # nginx_vhosts: []
 

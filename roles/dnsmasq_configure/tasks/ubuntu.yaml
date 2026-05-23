@@ -1,0 +1,12 @@
+---
+- name: Copy dnsmasq conf
+  ansible.builtin.copy:
+    src: "dnsmasq.conf/{{ ansible_facts['hostname'] }}"
+    dest: /etc/dnsmasq.d/ansible.conf
+    owner: root
+    group: root
+    mode: "0644"
+    force: true
+    validate: dnsmasq --conf-file=%s --test
+  notify: DnsmasqRestart
+...

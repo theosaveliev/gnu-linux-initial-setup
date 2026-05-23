@@ -2,21 +2,21 @@
 - name: Template systemd service
   ansible.builtin.template:
     src: tta.control.service.j2
-    dest: /etc/systemd/system/tta-control.service
+    dest: "/etc/systemd/system/{{ tta_control_name }}.service"
     owner: root
     group: root
     mode: "0644"
     force: true
 
-- name: Start tta_control
+- name: Start tta control
   ansible.builtin.systemd_service:
-    name: tta-control.service
+    name: "{{ tta_control_name }}.service"
     state: restarted
     enabled: true
     masked: false
     daemon_reload: true
 
-- name: Wait for tta_control to be ready
+- name: Wait for tta control to be ready
   ansible.builtin.wait_for:
     host: 127.0.0.1
     port: "{{ tta_control_port }}"

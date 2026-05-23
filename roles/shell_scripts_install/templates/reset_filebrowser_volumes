@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+
+{% if filebrowser_name is defined %}
+sudo systemctl stop {{ filebrowser_name }}
+sudo systemctl stop {{ filebrowser_name }}-mnt
+{% endif %}
+
+{% if transmission_name is defined %}
+sudo systemctl stop {{ transmission_name }}
+{% endif %}
+
+{% if filebrowser_name is defined %}
+docker volume rm "{{ filebrowser_name }}_{{ filebrowser_name }}-data"
+docker volume rm "{{ filebrowser_name }}_{{ filebrowser_name }}-database"
+docker volume prune --force
+{% endif %}

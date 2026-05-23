@@ -1,11 +1,11 @@
 ---
 services:
-  transmission:
+  "{{ transmission_name }}":
     image: "{{ transmission_image }}"
-    container_name: transmission
+    container_name: "{{ transmission_name }}"
     volumes:
-      - ./config:/config:rw
-      - filebrowser_filebrowser-data:/downloads
+      - "./config:/config:rw"
+      - "{{ filebrowser_name }}-data:/downloads"
 
     user: "{{ docker_run_as.user }}"
     group_add:
@@ -32,6 +32,7 @@ services:
     restart: always
 
 volumes:
-  filebrowser_filebrowser-data:
+  "{{ filebrowser_name }}-data":
+    name: "{{ filebrowser_name }}_{{ filebrowser_name }}-data"
     external: true
 ...

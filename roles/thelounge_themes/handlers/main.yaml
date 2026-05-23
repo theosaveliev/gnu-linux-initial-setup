@@ -1,0 +1,6 @@
+---
+- name: TheLoungeRestart
+  ansible.builtin.systemd_service:
+    name: "{{ thelounge_name }}.service"
+    state: restarted
+...

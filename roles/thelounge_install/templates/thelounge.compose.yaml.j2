@@ -1,8 +1,8 @@
 ---
 services:
-  thelounge:
+  "{{ thelounge_name }}":
     image: "{{ thelounge_image }}"
-    container_name: thelounge
+    container_name: "{{ thelounge_name }}"
     environment:
       - PUID={{ docker_run_as.user }}
       - PGID={{ docker_run_as.group }}
@@ -20,7 +20,7 @@ services:
       - "{{ thelounge_port }}:{{ thelounge_port }}"
 
     networks:
-      - irc-net
+      - "{{ ngircd_name }}-net"
 
     healthcheck:
       test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(thelounge_port | int) }} ' /proc/net/tcp"]
@@ -32,6 +32,6 @@ services:
     restart: always
 
 networks:
-  irc-net:
+  "{{ ngircd_name }}-net":
     external: true
 ...

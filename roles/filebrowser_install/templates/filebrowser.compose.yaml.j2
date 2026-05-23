@@ -1,13 +1,13 @@
 ---
 services:
-  filebrowser:
+  "{{ filebrowser_name }}":
     image: "{{ filebrowser_image }}"
-    container_name: filebrowser
+    container_name: "{{ filebrowser_name }}"
     volumes:
-      - ./config:/config:ro
-      - ./branding:/branding:ro
-      - filebrowser-database:/database
-      - filebrowser-data:/data
+      - "./config:/config:ro"
+      - "./branding:/branding:ro"
+      - "{{ filebrowser_name }}-database:/database"
+      - "{{ filebrowser_name }}-data:/data"
 
     ports:
       - "{{ filebrowser_port }}:{{ filebrowser_port }}"
@@ -34,14 +34,14 @@ services:
     restart: always
 
 volumes:
-  filebrowser-database:
+  "{{ filebrowser_name }}-database":
     driver: local
     driver_opts:
       type: "tmpfs"
       device: "tmpfs"
       o: "size={{ filebrowser_misc_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
 
-  filebrowser-data:
+  "{{ filebrowser_name }}-data":
     driver: local
     driver_opts:
       type: "tmpfs"

@@ -1,0 +1,12 @@
+---
+- name: Copy bird conf
+  ansible.builtin.copy:
+    src: "bird.conf/{{ ansible_facts['hostname'] }}"
+    dest: /etc/bird/bird.conf
+    owner: bird
+    group: bird
+    mode: "0640"
+    force: true
+    validate: bird -p -c %s
+  notify: BirdRestart
+...

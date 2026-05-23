@@ -1,11 +1,11 @@
 [Unit]
-Description=mediawiki
+Description={{ mediawiki_name }}
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=simple
-WorkingDirectory={{ ansible_facts['user_dir'] }}/mediawiki
+WorkingDirectory={{ ansible_facts['user_dir'] }}/{{ mediawiki_name }}
 ExecStart={{ docker_cli }} compose -f compose.yaml up
 ExecStop={{ docker_cli }} compose -f compose.yaml down
 Restart=always

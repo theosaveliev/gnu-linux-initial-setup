@@ -1,8 +1,8 @@
 ---
 services:
-  tta_telegram_bot:
+  "{{ tta_telegram_bot_name }}":
     image: "{{ tta_telegram_bot_image }}"
-    container_name: tta_telegram_bot
+    container_name: "{{ tta_telegram_bot_name }}"
     user: "{{ docker_run_as.user }}"
     group_add:
       - "{{ docker_run_as.group }}"

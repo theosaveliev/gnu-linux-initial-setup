@@ -1,12 +1,8 @@
 ---
-- name: Run Ubuntu pre install tasks
-  ansible.builtin.import_tasks: ubuntu_pre.yaml
+- name: Run Ubuntu tasks
+  ansible.builtin.import_tasks: ubuntu.yaml
   when: ansible_facts["distribution"] == "Ubuntu"
 
 - name: Run common tasks
   ansible.builtin.import_tasks: common.yaml
-
-- name: Run Ubuntu post install tasks
-  ansible.builtin.import_tasks: ubuntu_post.yaml
-  when: ansible_facts["distribution"] == "Ubuntu"
 ...

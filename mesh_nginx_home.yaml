@@ -1,0 +1,91 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: false
+  gather_facts: true
+
+
+- name: Request TLS certs
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: true
+  gather_facts: false
+  vars:
+    irc_domain: "irc.mesh"
+    ngircd_name: "ngircd-home"
+
+    selfsigned_cert_dir: "{{ ansible_facts['user_dir'] }}/{{ ngircd_name }}/certs"
+    selfsigned_cert_cn: "{{ irc_domain }}"
+    selfsigned_cert_san:
+      - "DNS:{{ irc_domain }}"
+      - "DNS:www.{{ irc_domain }}"
+
+    webroot_domain:
+      - "{{ irc_domain }}"
+
+  roles:
+    - { role: selfsigned_cert, tags: selfsigned_cert }
+    - { role: webroot_create, tags: webroot_create }
+    - { role: www_group, tags: www_group }
+
+
+- name: Start nginx
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: true
+  gather_facts: false
+  vars:
+    irc_domain: "irc.mesh"
+    ngircd_name: "ngircd-home"
+    selfsigned_cert_dir: "{{ ansible_facts['user_dir'] }}/{{ ngircd_name }}/certs"
+    thelounge_port: "11001"
+
+    nginx_vhosts:
+      - listen: "80"
+        server_name: "{{ irc_domain }} www.{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "{{ irc_domain }}.80.conf"
+        state: "present"
+        extra_parameters: |
+          location / {
+            return 301 https://{{ irc_domain }}$request_uri;
+          }
+
+      - listen: "443 ssl"
+        server_name: "www.{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "{{ irc_domain }}.www.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     {{ selfsigned_cert_dir }}/fullchain.pem;
+          ssl_certificate_key {{ selfsigned_cert_dir }}/privkey.pem;
+
+          return 301 https://{{ irc_domain }}$request_uri;
+
+      - listen: "443 ssl"
+        server_name: "{{ irc_domain }}"
+        root: "/var/www/{{ irc_domain }}"
+        filename: "{{ irc_domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     {{ selfsigned_cert_dir }}/fullchain.pem;
+          ssl_certificate_key {{ selfsigned_cert_dir }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ thelounge_port }};
+            proxy_http_version 1.1;
+            proxy_request_buffering off;
+            proxy_buffering off;
+            proxy_max_temp_file_size 0;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Connection "keep-alive";
+            proxy_socket_keepalive on;
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 86400;
+          }
+
+  roles:
+    - { role: geerlingguy.nginx, tags: nginx_tls }
+...

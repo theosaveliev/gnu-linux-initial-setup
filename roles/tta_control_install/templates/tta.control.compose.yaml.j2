@@ -1,8 +1,8 @@
 ---
 services:
-  tta_control:
+  "{{ tta_control_name }}":
     image: "{{ tta_control_image }}"
-    container_name: tta_control
+    container_name: "{{ tta_control_name }}"
     user: "{{ docker_run_as.user }}"
     group_add:
       - "{{ docker_run_as.group }}"

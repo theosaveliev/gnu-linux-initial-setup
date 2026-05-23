@@ -1,9 +1,13 @@
 #!/usr/bin/bash
 
-curl https://{{ control_domain }}/create_thelounge_user_files -H "Content-Type: application/json" -d '{"token": "{{ control_token }}"}'
-curl https://{{ control_domain }}/create_filebrowser_users_json -H "Content-Type: application/json" -d '{"token": "{{ control_token }}"}'
+curl https://{{ tta_control_domain }}/create_thelounge_user_files -H "Content-Type: application/json" -d '{"token": "{{ tta_control_token }}"}'
+curl https://{{ tta_control_domain }}/create_filebrowser_new_users_json -H "Content-Type: application/json" -d '{"token": "{{ tta_control_token }}"}'
 
-mv tta_control/data/thelounge/* thelounge/config/users/
-mv tta_control/data/filebrowser/users.json filebrowser/config/
+{% if thelounge_name is defined %}
+mv {{ ansible_facts['user_dir'] }}/{{ tta_control_name }}/{{ tta_control_irc_user_dir }}/* {{ ansible_facts['user_dir'] }}/{{ thelounge_name }}/config/users/
+{% endif %}
 
-sudo systemctl restart filebrowser
+{% if filebrowser_name is defined %}
+mv {{ ansible_facts['user_dir'] }}/{{ tta_control_name }}/{{ tta_control_files_user_dir }}/users.json {{ ansible_facts['user_dir'] }}/{{ filebrowser_name }}/config/
+sudo systemctl restart {{ filebrowser_name }}
+{% endif %}

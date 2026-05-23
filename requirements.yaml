@@ -4,6 +4,8 @@ collections:
   - name: community.crypto
   - name: devsec.hardening
   - name: community.docker
+  - name: stackhpc.linux
+  - name: idiv_biodiversity.systemd
 
 roles:
   - name: linux-system-roles.journald

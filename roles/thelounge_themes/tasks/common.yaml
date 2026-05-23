@@ -1,7 +1,7 @@
 ---
 - name: Install npm packages
   community.docker.docker_container_exec:
-    container: thelounge
+    container: "{{ thelounge_name }}"
     argv:
       - thelounge
       - install

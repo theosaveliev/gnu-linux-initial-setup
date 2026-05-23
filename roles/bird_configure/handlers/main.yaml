@@ -1,0 +1,6 @@
+---
+- name: BirdRestart
+  ansible.builtin.systemd_service:
+    name: bird.service
+    state: restarted
+...

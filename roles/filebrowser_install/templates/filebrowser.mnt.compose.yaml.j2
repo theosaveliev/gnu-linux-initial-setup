@@ -1,11 +1,11 @@
 ---
 services:
-  filebrowser_mnt:
+  "{{ filebrowser_name }}-mnt":
     image: "ubuntu:noble"
-    container_name: filebrowser-mnt
+    container_name: "{{ filebrowser_name }}-mnt"
     volumes:
-      - filebrowser_filebrowser-database:/database
-      - filebrowser_filebrowser-data:/data
+      - "{{ filebrowser_name }}-database:/database"
+      - "{{ filebrowser_name }}-data:/data"
 
     user: "{{ docker_run_as.user }}"
     group_add:
@@ -21,9 +21,11 @@ services:
     restart: always
 
 volumes:
-  filebrowser_filebrowser-database:
+  "{{ filebrowser_name }}-database":
+    name: "{{ filebrowser_name }}_{{ filebrowser_name }}-database"
     external: true
 
-  filebrowser_filebrowser-data:
+  "{{ filebrowser_name }}-data":
+    name: "{{ filebrowser_name }}_{{ filebrowser_name }}-data"
     external: true
 ...

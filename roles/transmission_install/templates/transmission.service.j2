@@ -1,11 +1,14 @@
 [Unit]
-Description=transmission
+Description={{ transmission_name }}
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=simple
-WorkingDirectory={{ ansible_facts['user_dir'] }}/transmission
+WorkingDirectory={{ ansible_facts['user_dir'] }}/{{ transmission_name }}
 ExecStart={{ docker_cli }} compose -f compose.yaml up
 ExecStop={{ docker_cli }} compose -f compose.yaml down
 Restart=always
+
+[Install]
+WantedBy=multi-user.target

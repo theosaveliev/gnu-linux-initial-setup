@@ -20,8 +20,8 @@
   community.crypto.openssl_csr:
     path: "{{ selfsigned_cert_dir }}/cert.csr"
     privatekey_path: "{{ selfsigned_cert_dir }}/privkey.pem"
-    common_name: "{{ selfsigned_cert_domain }}"
-    use_common_name_for_san: true
+    common_name: "{{ selfsigned_cert_cn }}"
+    subject_alt_name: "{{ selfsigned_cert_san }}"
     state: present
     owner: "{{ ansible_user }}"
     mode: "0600"

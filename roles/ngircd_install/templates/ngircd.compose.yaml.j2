@@ -1,28 +1,34 @@
 ---
 services:
-  ngircd:
+  "{{ ngircd_name }}":
     image: "{{ ngircd_image }}"
-    container_name: ngircd
+    container_name: "{{ ngircd_name }}"
     environment:
       - PUID={{ docker_run_as.user }}
       - PGID={{ docker_run_as.group }}
+
     volumes:
       - ./config:/config:rw
       - ./certs:/certs:ro
+
     ports:
       - "{{ ngircd_tls_port }}:{{ ngircd_tls_port }}"
+
     networks:
-      irc-net:
+      "{{ ngircd_name }}-net":
         aliases:
           - "{{ irc_domain }}"
+
     healthcheck:
       test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(ngircd_tls_port | int) }} ' /proc/net/tcp"]
       interval: 30s
       timeout: 2s
       retries: 3
       start_period: 10s
+
     restart: always
+
 networks:
-  irc-net:
-    name: irc-net
+  "{{ ngircd_name }}-net":
+    name: "{{ ngircd_name }}-net"
 ...

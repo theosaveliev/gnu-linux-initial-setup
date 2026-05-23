@@ -1,0 +1,19 @@
+---
+- name: Install tools
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name:
+      - iproute2
+      - net-tools
+      - bridge-utils
+      - bind9-dnsutils
+      - isc-dhcp-client
+      - inetutils-traceroute
+      - tcpdump
+      - iftop
+      - vim
+      - git
+      - curl
+...
