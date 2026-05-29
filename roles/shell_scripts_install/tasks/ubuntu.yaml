@@ -15,9 +15,9 @@
     force: true
   loop:
     - whos_pending
-    - move_accounts
+    - create_sftpgo_users
+    - create_thelounge_users
     - notify_users
     - set_time
-    - reset_filebrowser_volumes
-    - reset_filebrowser_users
+    - reset_sftpgo_volumes
 ...

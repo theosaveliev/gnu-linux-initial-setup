@@ -1,0 +1,32 @@
+---
+- name: Ensure sftpgo directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/config"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Copy sftpgo json
+  ansible.builtin.copy:
+    src: "{{ sftpgo_name }}/config-{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/config/sftpgo.json"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Copy backup json
+  ansible.builtin.copy:
+    src: "{{ sftpgo_name }}/backup-{{ ansible_facts['hostname'] }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/config/backup.json"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Template sftpgo compose file
+  ansible.builtin.template:
+    src: sftpgo.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

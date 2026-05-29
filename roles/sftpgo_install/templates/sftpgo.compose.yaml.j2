@@ -1,0 +1,48 @@
+---
+services:
+  "{{ sftpgo_name }}":
+    image: "{{ sftpgo_image }}"
+    container_name: "{{ sftpgo_name }}"
+    volumes:
+      - "./config:/var/lib/sftpgo:rw"
+      - "{{ sftpgo_name }}-data:{{ sftpgo_data_dir }}"
+
+    environment:
+      - "SFTPGO_LOADDATA_FROM=/var/lib/sftpgo/backup.json"
+      - "SFTPGO_LOADDATA_MODE=0"
+
+    ports:
+{% if sftpgo_http_port is defined %}
+      - "{{ sftpgo_http_port }}:{{ sftpgo_http_port }}"
+{% endif %}
+{% if sftpgo_sftp_port is defined %}
+      - "{{ sftpgo_sftp_port }}:{{ sftpgo_sftp_port }}"
+{% endif %}
+{% if sftpgo_webdav_port is defined %}
+      - "{{ sftpgo_webdav_port }}:{{ sftpgo_webdav_port }}"
+{% endif %}
+{% if sftpgo_api_port is defined %}
+      - "{{ sftpgo_api_port }}:{{ sftpgo_api_port }}"
+{% endif %}
+
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    healthcheck:
+      test: ["CMD-SHELL", "sftpgo ping"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+    restart: always
+
+volumes:
+  "{{ sftpgo_name }}-data":
+    driver: local
+    driver_opts:
+      type: "tmpfs"
+      device: "tmpfs"
+      o: "size={{ sftpgo_volume_size }},uid={{ docker_run_as.user }},gid={{ docker_run_as.group }},mode=0755"
+...

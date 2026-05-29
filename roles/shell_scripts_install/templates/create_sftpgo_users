@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+curl https://{{ tta_control_domain }}/create_sftpgo_backup_json -H "Content-Type: application/json" -d '{"token": "{{ tta_control_token }}"}'
+
+{% if sftpgo_name is defined %}
+mv {{ ansible_facts['user_dir'] }}/{{ tta_control_name }}/{{ tta_sftpgo_backup_dir }}/backup.json {{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/config/
+TOKEN=$(curl -s http://localhost:{{ sftpgo_api_port }}/api/v2/token -u $SFTPGO_BASIC_AUTH | grep -o '"access_token":"[^"]*' | cut -d'"' -f4)
+curl -s -H "Authorization: Bearer $TOKEN"  'http://localhost:{{ sftpgo_api_port }}/api/v2/loaddata?scan-quota=0&mode=1&input-file=/var/lib/sftpgo/backup.json'
+{% endif %}

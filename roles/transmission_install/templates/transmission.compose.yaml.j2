@@ -5,7 +5,7 @@ services:
     container_name: "{{ transmission_name }}"
     volumes:
       - "./config:/config:rw"
-      - "{{ filebrowser_name }}-data:/downloads"
+      - "{{ sftpgo_name }}-data:/downloads"
 
     user: "{{ docker_run_as.user }}"
     group_add:
@@ -32,7 +32,7 @@ services:
     restart: always
 
 volumes:
-  "{{ filebrowser_name }}-data":
-    name: "{{ filebrowser_name }}_{{ filebrowser_name }}-data"
+  "{{ sftpgo_name }}-data":
+    name: "{{ sftpgo_name }}_{{ sftpgo_name }}-data"
     external: true
 ...
