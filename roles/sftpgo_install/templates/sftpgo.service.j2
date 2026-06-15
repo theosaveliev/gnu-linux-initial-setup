@@ -1,11 +1,11 @@
 [Unit]
-Description={{ sftpgo_name }}
+Description={{ service.name }}
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=simple
-WorkingDirectory={{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}
+WorkingDirectory={{ ansible_facts['user_dir'] }}/{{ service.name }}
 ExecStart={{ docker_cli }} compose -f compose.yaml up
 ExecStop={{ docker_cli }} compose -f compose.yaml down
 Restart=always

@@ -1,0 +1,41 @@
+---
+services:
+  "{{ service.name }}":
+    image: "{{ images.lldap }}"
+    container_name: "{{ service.name }}"
+    user: "{{ docker_run_as.user }}:{{ docker_run_as.group }}"
+
+    volumes:
+      - "./data:/data:rw"
+
+    ports:
+{% if service.http_port is defined %}
+      - "{{ service.http_port }}:{{ service.http_port }}"
+{% endif %}
+{% if service.ldap_port is defined %}
+      - "{{ service.ldap_port }}:{{ service.ldap_port }}"
+{% endif %}
+    
+    networks:
+      "{{ service.name }}-net":
+        aliases:
+          - "{{ service.domain }}"
+
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges
+
+    healthcheck:
+      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(service.http_port | int) }} ' /proc/net/tcp"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+    restart: always
+
+networks:
+  "{{ service.name }}-net":
+    name: "{{ service.name }}-net"
+...

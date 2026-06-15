@@ -1,0 +1,5 @@
+---
+systemd_networkd_apply_config: true
+systemd_networkd_enable_resolved: false
+systemd_networkd_symlink_resolv_conf: false
+...

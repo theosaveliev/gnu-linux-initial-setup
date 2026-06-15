@@ -1,7 +1,7 @@
 ---
 - name: Ensure ngircd directories
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/{{ ngircd_name }}/{{ item }}"
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/{{ item }}"
     state: directory
     owner: "{{ ansible_user }}"
     mode: "0700"
@@ -9,26 +9,26 @@
     - config
     - certs
 
-- name: Template compose file
-  ansible.builtin.template:
-    src: ngircd.compose.yaml.j2
-    dest: "{{ ansible_facts['user_dir'] }}/{{ ngircd_name }}/compose.yaml"
-    owner: "{{ ansible_user }}"
-    mode: "0600"
-    force: true
-
-- name: Copy ngircd conf
+- name: Copy ngircd.conf
   ansible.builtin.copy:
-    src: "{{ ngircd_name }}/{{ ansible_facts['hostname'] }}"
-    dest: "{{ ansible_facts['user_dir'] }}/{{ ngircd_name }}/config/ngircd.conf"
+    src: "ngircd.conf/{{ service.name }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/config/ngircd.conf"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
 
 - name: Generate DH params
   community.crypto.openssl_dhparam:
-    path: "{{ ansible_facts['user_dir'] }}/{{ ngircd_name }}/certs/dhparams.pem"
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/certs/dhparams.pem"
     size: 2048
     owner: "{{ ansible_user }}"
     mode: "0600"
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: ngircd.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
 ...

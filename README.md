@@ -7,31 +7,32 @@ Tested OS: 24.04 LTS
 
 #### Requirements
 ```
-% ansible-galaxy install -r requirements.yaml
+% ansible-galaxy collection install -U -r requirements.yaml
+% ansible-galaxy role install -f -r requirements.yaml
 ```
 
 
 #### Initial configuration and hardening
 ```
 % ansible-playbook system.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
-% ansible-playbook system.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=node2" -t nft_apply
+% ansible-playbook system.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519 -e "target_hosts=node1" -t nft_apply
 ```
 
 
 #### Mesh setup
 ```
-% ansible-playbook mesh_setup_home.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
-% ansible-playbook mesh_setup_neighbor.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
+% ansible-playbook mesh_setup_node1.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
+% ansible-playbook mesh_setup_node2.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
 ```
 
 
 #### Services setup
 ```
 % ansible-playbook docker.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
-% ansible-playbook mesh_nginx_home.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
-% ansible-playbook mesh_nginx_neighbor.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
-% ansible-playbook mesh_services_home.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
-% ansible-playbook mesh_services_neighbor.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
+% ansible-playbook services_node1.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
+% ansible-playbook nginx_node1.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
+% ansible-playbook services_node2.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
+% ansible-playbook nginx_node2.yaml -i inventory/hosts.yaml --private-key ~/.ssh/id_ed25519
 ```
 
 

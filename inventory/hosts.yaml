@@ -2,8 +2,7 @@
 all:
   hosts:
     node1:
-      ansible_host: "172.16.200.1"
-
+      ansible_host: "10.10.123.123"
     node2:
-      ansible_host: "172.16.300.1"
+      ansible_host: "10.10.21.21"
 ...

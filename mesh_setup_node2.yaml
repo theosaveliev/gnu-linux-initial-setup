@@ -1,0 +1,70 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('node2') }}"
+  become: false
+  gather_facts: true
+
+- name: Configure network interfaces
+  hosts: "{{ target_hosts | default('node2') }}"
+  become: true
+  gather_facts: false
+  vars:
+    systemd_networkd_netdev:
+      "10-br-mesh":
+        - NetDev:
+            - Name: "br-mesh"
+            - Kind: "bridge"
+
+    systemd_networkd_network:
+      "20-enp0s1":
+        - Match:
+            - Name: "enp0s1"
+        - Network:
+            - DHCP: "yes"
+            - LinkLocalAddressing: "yes"
+        - Link:
+            - RequiredForOnline: "yes"
+
+      "30-enp0s3":
+        - Match:
+            - Name: "enp0s3"
+        - Network:
+            - Bridge: "br-mesh"
+            - LinkLocalAddressing: "yes"
+        - Link:
+            - RequiredForOnline: "no"
+
+      "40-br-mesh":
+        - Match:
+            - Name: "br-mesh"
+        - Network:
+            - Address: "10.10.2.1/24"
+            - LinkLocalAddressing: "yes"
+        - Link:
+            - RequiredForOnline: "no"
+
+      "50-enp0s2":
+        - Match:
+            - Name: "enp0s2"
+        - Network:
+            - DHCP: "yes"
+            - LinkLocalAddressing: "yes"
+        - DHCP:
+            - UseGateway: "no"
+        - Link:
+            - RequiredForOnline: "no"
+
+  roles:
+    - { role: stackhpc.linux.systemd_networkd, tags: systemd_networkd }
+
+- name: Install packages
+  hosts: "{{ target_hosts | default('node2') }}"
+  become: true
+  gather_facts: false
+  roles:
+    - { role: tools_install, tags: tools_install }
+    - { role: idiv_biodiversity.systemd.systemd_resolved, tags: systemd_resolved }
+    - { role: bird_install, tags: bird_install }
+    - { role: bird_configure, tags: bird_configure }
+    - { role: dnsmasq_install, tags: dnsmasq_install }
+    - { role: dnsmasq_configure, tags: dnsmasq_configure }

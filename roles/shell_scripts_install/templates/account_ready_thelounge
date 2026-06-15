@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+curl -X POST http://localhost:{{ control.port }}/notification -H "X-API-Key: {{ control.token }}" -H "Content-Type: application/json" -d "{\"recipient\": \"$1\", \"message\": \"Your irc account is ready.\" }"

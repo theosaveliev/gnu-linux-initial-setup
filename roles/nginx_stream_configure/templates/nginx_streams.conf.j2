@@ -1,0 +1,14 @@
+server {
+  listen {{ item.listen }};
+{% if item.proxy_protocol %}
+  proxy_protocol on;
+{% endif %}
+
+  ssl_certificate     {{ item.ssl_certificate }};
+  ssl_certificate_key {{ item.ssl_certificate_key }};
+  ssl_protocols       {{ item.ssl_protocols }};
+
+  proxy_pass            {{ item.proxy_pass }};
+  proxy_connect_timeout {{ item.proxy_connect_timeout }};
+  proxy_timeout         {{ item.proxy_timeout }};
+}

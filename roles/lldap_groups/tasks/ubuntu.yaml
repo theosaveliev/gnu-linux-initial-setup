@@ -1,0 +1,8 @@
+---
+- name: Install ansible ldap requirements
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name: python3-ldap
+...

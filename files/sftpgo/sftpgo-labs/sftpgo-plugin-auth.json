@@ -1,0 +1,25 @@
+{
+    "cache_size": 100,
+    "configs": [
+        {
+            "dial_urls": [
+                "ldap://lldap.mesh:11333"
+            ],
+            "base_dn": "ou=people,dc=lldap,dc=mesh",
+            "bind_dn": "uid=sftpgo,ou=people,dc=lldap,dc=mesh",
+            "password": "redacted3",
+            "start_tls": 0,
+            "skip_tls_verify": true,
+            "ca_certificates": [],
+            "search_query": "(&(objectClass=inetOrgPerson)(uid=%username%)(memberOf=cn=sftpgo,ou=groups,dc=lldap,dc=mesh))",
+            "group_attributes": [],
+            "primary_group_prefix": "",
+            "secondary_group_prefix": "",
+            "membership_group_prefix": "",
+            "require_groups": false,
+            "sftpgo_user_requirements": 0,
+            "base_dir": "",
+            "cache_time": 0
+        }
+    ]
+}

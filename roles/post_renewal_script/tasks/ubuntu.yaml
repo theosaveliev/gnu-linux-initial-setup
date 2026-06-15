@@ -1,7 +1,7 @@
 ---
 - name: Ensure cert dir
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/{{ post_renewal_service_name }}/certs"
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/certs"
     state: directory
     owner: "{{ ansible_user }}"
     mode: "0700"
@@ -9,14 +9,14 @@
 - name: Template post renewal script
   ansible.builtin.template:
     src: post.renew.sh.j2
-    dest: /etc/letsencrypt/renewal-hooks/post/{{ post_renewal_service_name }}.post.renew.sh
+    dest: /etc/letsencrypt/renewal-hooks/post/{{ service.name }}.post.renew.sh
     owner: root
     group: root
     mode: "0700"
     force: true
 
 - name: Run post renewal script
-  ansible.builtin.command: /etc/letsencrypt/renewal-hooks/post/{{ post_renewal_service_name }}.post.renew.sh
+  ansible.builtin.command: /etc/letsencrypt/renewal-hooks/post/{{ service.name }}.post.renew.sh
   register: post_renewal_script_rc
   changed_when: "post_renewal_script_rc.rc == 0"
 ...

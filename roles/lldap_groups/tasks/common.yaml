@@ -1,0 +1,16 @@
+---
+- name: Create groups
+  community.general.ldap_entry:
+    server_uri: "ldap://localhost:{{ service.ldap_port }}"
+    bind_dn: "{{ service.admin_dn }}"
+    bind_pw: "{{ service.admin_password }}"
+    dn: "cn={{ item }},{{ service.groups_dn }}"
+    objectClass:
+      - groupOfUniqueNames
+      - groupOfNames
+    attributes:
+      cn: "{{ item }}"
+      uid: "{{ item }}"
+    state: present
+  loop: "{{ service.groups }}"
+...

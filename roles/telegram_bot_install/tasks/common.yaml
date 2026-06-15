@@ -1,0 +1,24 @@
+---
+- name: Ensure telegram_bot directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/{{ service.session_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Template telegram.env
+  ansible.builtin.template:
+    src: telegram.bot.env.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/telegram.env"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: telegram.bot.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

@@ -1,0 +1,16 @@
+---
+- name: Install nginx stream module
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name: libnginx-mod-stream
+
+- name: Create /etc/nginx/stream.d
+  ansible.builtin.file:
+    path: /etc/nginx/stream.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+...

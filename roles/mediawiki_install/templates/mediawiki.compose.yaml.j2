@@ -1,23 +1,28 @@
 ---
 services:
-  "{{ mediawiki_name }}":
-    image: "{{ mediawiki_image }}"
-    container_name: "{{ mediawiki_name }}"
+  "{{ service.name }}":
+    image: "{{ images.mediawiki }}"
+    container_name: "{{ service.name }}"
 
     user: "{{ docker_run_as.user }}"
     group_add:
       - "{{ docker_run_as.group }}"
 
     volumes:
-      - ./www/data:/var/www/data:rw
-      - ./www/images:/var/www/html/images:rw
-      - ./www/LocalSettings.php:/var/www/html/LocalSettings.php
+      - "./www/data:/var/www/data:rw"
+      - "./www/images:/var/www/html/images:rw"
+      - "./www/LocalSettings.php:/var/www/html/LocalSettings.php:ro"
 
     ports:
-      - "{{ mediawiki_port }}:80"
+      - "{{ service.port }}:9000"
+
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges
 
     healthcheck:
-      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(80 | int) }} ' /proc/net/tcp"]
+      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(9000 | int) }} ' /proc/net/tcp || grep -q ':{{ "%04X" | format(9000 | int) }} ' /proc/net/tcp6"]
       interval: 10s
       timeout: 2s
       retries: 3

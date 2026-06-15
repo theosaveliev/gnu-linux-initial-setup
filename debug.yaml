@@ -1,0 +1,232 @@
+- name: Debug
+  hosts: "{{ target_hosts | default('localhost') }}"
+  become: false
+  gather_facts: false
+  vars:
+    www_domains: []
+    landing_destination: ""
+    www_landings: []
+
+    service_domains:
+      - "{{ services.bot_home.domain }}"
+      - "{{ services.bot_mesh.domain }}"
+
+    selfsigned_www_domains: []
+    selfsigned_service_domains: []
+
+    certbot_certs: |
+      {% set certs = [] %}
+      {% for name in www_domains %}
+      {% set _ = certs.append({
+        'name': name,
+        'email': certbot_admin_email,
+        'webroot': '/var/www/' ~ name,
+        'domains': [name, 'www.' ~ name],
+      }) %}
+      {% endfor %}
+      {% for name in www_landings %}
+      {% set _ = certs.append({
+        'name': name,
+        'email': certbot_admin_email,
+        'webroot': '/var/www/' ~ name,
+        'domains': [name, 'www.' ~ name],
+      }) %}
+      {% endfor %}
+      {% for name in service_domains %}
+      {% set _ = certs.append({
+        'name': name,
+        'email': certbot_admin_email,
+        'webroot': '/var/www/' ~ name,
+        'domains': [name],
+      }) %}
+      {% endfor %}
+      {{ certs }}
+
+    selfsigned_certs: |
+      {% set certs = [] %}
+      {% for obj in selfsigned_www_domains %}
+      {% set _ = certs.append({
+        'dir': obj.dir,
+        'san': ['DNS:' ~ obj.domain, 'DNS:www.' ~ obj.domain]
+      }) %}
+      {% endfor %}
+      {% for obj in selfsigned_service_domains %}
+      {% set _ = certs.append({
+        'dir': obj.dir,
+        'san': ['DNS:' ~ obj.domain]
+      }) %}
+      {% endfor %}
+      {{ certs }}
+
+    nginx_acme_redirect: |
+      location /.well-known/acme-challenge/ {
+        root /var/www/__DOMAIN__;
+      }
+
+      location / {
+        return 301 https://__TARGET__$request_uri;
+      }
+
+    nginx_tls_redirect: |
+      ssl_certificate     __CERT__;
+      ssl_certificate_key __KEY__;
+
+      return 301 https://__TARGET__$request_uri;
+
+    supplementary_vhosts: |
+      {% set vhosts = [] %}
+      {% for name in www_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': name ~ ' www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', name)
+          | replace('__TARGET__', name)
+      }) %}
+      {% set _ = vhosts.append({
+        'listen': '443 ssl',
+        'server_name': 'www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.www.443.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_tls_redirect
+          | replace('__CERT__', '/etc/letsencrypt/live/' ~ name ~ '/fullchain.pem')
+          | replace('__KEY__', '/etc/letsencrypt/live/' ~ name ~ '/privkey.pem')
+          | replace('__TARGET__', name)
+      }) %}
+      {% endfor %}
+      {% for name in www_landings %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': name ~ ' www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', name)
+          | replace('__TARGET__', landing_destination)
+      }) %}
+      {% set _ = vhosts.append({
+        'listen': '443 ssl',
+        'server_name': name ~ ' www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.landing.443.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_tls_redirect
+          | replace('__CERT__', '/etc/letsencrypt/live/' ~ name ~ '/fullchain.pem')
+          | replace('__KEY__', '/etc/letsencrypt/live/' ~ name ~ '/privkey.pem')
+          | replace('__TARGET__', landing_destination)
+      }) %}
+      {% endfor %}
+      {% for name in service_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', name)
+          | replace('__TARGET__', name)
+      }) %}
+      {% endfor %}
+      {% for obj in selfsigned_www_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': obj.domain ~ ' www.' ~ obj.domain,
+        'root': '/var/www/' ~ obj.domain,
+        'filename': obj.domain ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', obj.domain)
+          | replace('__TARGET__', obj.domain)
+      }) %}
+      {% set _ = vhosts.append({
+        'listen': '443 ssl',
+        'server_name': 'www.' ~ obj.domain,
+        'root': '/var/www/' ~ obj.domain,
+        'filename': obj.domain ~ '.www.443.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_tls_redirect
+          | replace('__CERT__', obj.dir ~ '/fullchain.pem')
+          | replace('__KEY__', obj.dir ~ '/privkey.pem')
+          | replace('__TARGET__', obj.domain)
+      }) %}
+      {% endfor %}
+      {% for obj in selfsigned_service_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': obj.domain,
+        'root': '/var/www/' ~ obj.domain,
+        'filename': obj.domain ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', obj.domain)
+          | replace('__TARGET__', obj.domain)
+      }) %}
+      {% endfor %}
+      {{ vhosts }}
+
+    prod_vhosts:
+      - listen: "443 ssl"
+        server_name: "{{ services.bot_home.domain }}"
+        root: "/var/www/{{ services.bot_home.domain }}"
+        filename: "{{ services.bot_home.domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ services.bot_home.domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ services.bot_home.domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ services.bot_home.port }};
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ services.bot_mesh.domain }}"
+        root: "/var/www/{{ services.bot_mesh.domain }}"
+        filename: "{{ services.bot_mesh.domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ services.bot_mesh.domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ services.bot_mesh.domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ services.bot_mesh.port }};
+          }
+
+
+    nginx_vhosts: "{{ prod_vhosts + supplementary_vhosts }}"
+
+    nginx_streams: []
+
+  tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        var: certbot_certs
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: selfsigned_certs
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: supplementary_vhosts
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: prod_vhosts
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: nginx_vhosts

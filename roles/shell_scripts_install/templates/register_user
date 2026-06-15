@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+curl -X PUT http://localhost:{{ control.port }}/user -H "X-API-Key: {{ control.token }}" -H "Content-Type: application/json" -d "{ \"id\": \"$1\", \"username\": \"$2\", \"full_name\": \"$3\" }"

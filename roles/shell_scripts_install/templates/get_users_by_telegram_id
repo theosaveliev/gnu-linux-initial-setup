@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+curl -H "X-API-Key: {{ control.token }}" "http://localhost:{{ control.port }}/user?telegram_id=$1"

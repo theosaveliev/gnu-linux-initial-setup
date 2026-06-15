@@ -1,29 +1,41 @@
 ---
 services:
-  "{{ thelounge_name }}":
-    image: "{{ thelounge_image }}"
-    container_name: "{{ thelounge_name }}"
+  "{{ service.name }}":
+    image: "{{ images.thelounge }}"
+    container_name: "{{ service.name }}"
     environment:
-      - PUID={{ docker_run_as.user }}
-      - PGID={{ docker_run_as.group }}
+      - "PUID={{ docker_run_as.user }}"
+      - "PGID={{ docker_run_as.group }}"
 
     volumes:
-      - ./config:/config:rw
-      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg-inverted.svg
-      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg.svg
-      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg-inverted.svg
-      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg.svg
-      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg-inverted.svg
-      - ./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg
+      - "./config:/config:rw"
+      - "./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg-inverted.svg:ro"
+      - "./thelounge_logo.svg:/app/thelounge/public/img/logo-horizontal-transparent-bg.svg:ro"
+      - "./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg-inverted.svg:ro"
+      - "./thelounge_logo.svg:/app/thelounge/public/img/logo-transparent-bg.svg:ro"
+      - "./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg-inverted.svg:ro"
+      - "./thelounge_logo.svg:/app/thelounge/public/img/logo-vertical-transparent-bg.svg:ro"
 
     ports:
-      - "{{ thelounge_port }}:{{ thelounge_port }}"
+      - "{{ service.port }}:{{ service.port }}"
 
     networks:
-      - "{{ ngircd_name }}-net"
+      - "{{ lldap.name }}-net"
+      - "{{ ngircd.name }}-net"
+
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - FOWNER
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+    security_opt:
+      - no-new-privileges
 
     healthcheck:
-      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(thelounge_port | int) }} ' /proc/net/tcp"]
+      test: ["CMD-SHELL", "grep -q ':{{ "%04X" | format(service.port | int) }} ' /proc/net/tcp"]
       interval: 30s
       timeout: 2s
       retries: 3
@@ -32,6 +44,8 @@ services:
     restart: always
 
 networks:
-  "{{ ngircd_name }}-net":
+  "{{ lldap.name }}-net":
+    external: true
+  "{{ ngircd.name }}-net":
     external: true
 ...

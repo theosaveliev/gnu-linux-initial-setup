@@ -2,7 +2,7 @@
 - name: Template sftpgo systemd service
   ansible.builtin.template:
     src: sftpgo.service.j2
-    dest: /etc/systemd/system/{{ sftpgo_name }}.service
+    dest: /etc/systemd/system/{{ service.name }}.service
     owner: root
     group: root
     mode: "0644"
@@ -10,7 +10,7 @@
 
 - name: Start sftpgo
   ansible.builtin.systemd_service:
-    name: "{{ sftpgo_name }}.service"
+    name: "{{ service.name }}.service"
     state: restarted
     enabled: true
     masked: false

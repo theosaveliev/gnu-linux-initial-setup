@@ -1,0 +1,17 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('node2') }}"
+  become: false
+  gather_facts: true
+
+- name: Install services
+  hosts: "{{ target_hosts | default('node2') }}"
+  become: true
+  gather_facts: false
+  roles:
+    - role: telegram_bot_install
+      tags: [telegram_bot_install]
+      vars:
+        service: "{{ services.bot_mesh }}"
+        control: "{{ services.control_mesh }}"
+...

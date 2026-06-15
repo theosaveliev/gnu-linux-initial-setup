@@ -3,12 +3,12 @@
 sudo timedatectl set-ntp no
 sudo timedatectl set-time "{{ now(utc=true,fmt='%Y-%m-%d %H:%M:%S') }}"
 
-{% if ngircd_name is defined %}
-sudo systemctl restart {{ ngircd_name }}
+{% if ngircd is defined %}
+sudo systemctl restart {{ ngircd.name }}
 {% endif %}
 
-{% if thelounge_name is defined %}
-sudo systemctl restart {{ thelounge_name }}
+{% if thelounge is defined %}
+sudo systemctl restart {{ thelounge.name }}
 {% endif %}
 
-sudo systemctl restart {{ tta_control_name }}
+sudo systemctl restart {{ control.name }}

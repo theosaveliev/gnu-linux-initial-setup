@@ -1,0 +1,7 @@
+---
+- name: Stop transmission
+  ansible.builtin.systemd_service:
+    name: "{{ service.name }}.service"
+    state: stopped
+  failed_when: false
+...

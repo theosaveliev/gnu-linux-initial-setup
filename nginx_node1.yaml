@@ -1,0 +1,316 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: false
+  gather_facts: true
+
+- name: Create temp vhosts
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: true
+  gather_facts: false
+  vars:
+    webroot_domains:
+      - "{{ services.lldap_mesh.domain }}"
+      - "{{ services.control_mesh.domain }}"
+      - "{{ services.thelounge_mesh.domain }}"
+      - "{{ services.sftpgo_mesh.domain }}"
+      - "{{ services.transmission_mesh.domain }}"
+
+    nginx_vhosts: |
+      {% set vhosts = [] %}
+      {% for name in webroot_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': name ~ ' www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.80.conf',
+        'state': 'present'
+      }) %}
+      {% endfor %}
+      {{ vhosts }}
+
+  roles:
+    - { role: webroot_create, tags: webroot_create }
+    - { role: www_group, tags: www_group }
+    - { role: nginx_stream_install, tags: nginx_stream_install }
+    - { role: geerlingguy.nginx, tags: nginx_temp_vhost }
+
+
+- name: Configure nginx
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: true
+  gather_facts: false
+  vars:
+    www_domains:
+      - "{{ services.thelounge_mesh.domain }}"
+      - "{{ services.sftpgo_mesh.domain }}"
+
+    landing_destination: ""
+    www_landings: []
+
+    service_domains:
+      - "{{ services.control_mesh.domain }}"
+
+    selfsigned_www_domains: []
+
+    selfsigned_service_domains:
+      - domain: "{{ services.lldap_mesh.domain }}"
+        dir: "{{ ansible_facts['user_dir'] }}/{{ services.lldap_mesh.name }}/certs"
+      - domain: "{{ services.transmission_mesh.domain }}"
+        dir: "{{ ansible_facts['user_dir'] }}/{{ services.transmission_mesh.name }}/certs"
+
+    certbot_certs: |
+      {% set certs = [] %}
+      {% for name in www_domains %}
+      {% set _ = certs.append({
+        'name': name,
+        'email': certbot_admin_email,
+        'webroot': '/var/www/' ~ name,
+        'domains': [name, 'www.' ~ name],
+      }) %}
+      {% endfor %}
+      {% for name in www_landings %}
+      {% set _ = certs.append({
+        'name': name,
+        'email': certbot_admin_email,
+        'webroot': '/var/www/' ~ name,
+        'domains': [name, 'www.' ~ name],
+      }) %}
+      {% endfor %}
+      {% for name in service_domains %}
+      {% set _ = certs.append({
+        'name': name,
+        'email': certbot_admin_email,
+        'webroot': '/var/www/' ~ name,
+        'domains': [name],
+      }) %}
+      {% endfor %}
+      {{ certs }}
+
+    selfsigned_certs: |
+      {% set certs = [] %}
+      {% for obj in selfsigned_www_domains %}
+      {% set _ = certs.append({
+        'dir': obj.dir,
+        'san': ['DNS:' ~ obj.domain, 'DNS:www.' ~ obj.domain]
+      }) %}
+      {% endfor %}
+      {% for obj in selfsigned_service_domains %}
+      {% set _ = certs.append({
+        'dir': obj.dir,
+        'san': ['DNS:' ~ obj.domain]
+      }) %}
+      {% endfor %}
+      {{ certs }}
+
+    nginx_streams:
+      - filename: "{{ services.lldap_mesh.domain }}.{{ services.lldap_mesh.ldaps_port }}.conf"
+        listen: "{{ services.lldap_mesh.ldaps_port }} ssl"
+        proxy_protocol: false
+        ssl_certificate: "{{ ansible_facts['user_dir'] }}/{{ services.lldap_mesh.name }}/certs/fullchain.pem"
+        ssl_certificate_key: "{{ ansible_facts['user_dir'] }}/{{ services.lldap_mesh.name }}/certs/privkey.pem"
+        ssl_protocols: "TLSv1.2 TLSv1.3"
+        proxy_pass: "127.0.0.1:{{ services.lldap_mesh.ldap_port }}"
+        proxy_connect_timeout: "10s"
+        proxy_timeout: "86400s"
+
+    nginx_acme_redirect: |
+      location /.well-known/acme-challenge/ {
+        root /var/www/__DOMAIN__;
+      }
+
+      location / {
+        return 301 https://__TARGET__$request_uri;
+      }
+
+    nginx_tls_redirect: |
+      ssl_certificate     __CERT__;
+      ssl_certificate_key __KEY__;
+
+      return 301 https://__TARGET__$request_uri;
+
+    supplementary_vhosts: |
+      {% set vhosts = [] %}
+      {% for name in www_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': name ~ ' www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', name)
+          | replace('__TARGET__', name)
+      }) %}
+      {% set _ = vhosts.append({
+        'listen': '443 ssl',
+        'server_name': 'www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.www.443.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_tls_redirect
+          | replace('__CERT__', '/etc/letsencrypt/live/' ~ name ~ '/fullchain.pem')
+          | replace('__KEY__', '/etc/letsencrypt/live/' ~ name ~ '/privkey.pem')
+          | replace('__TARGET__', name)
+      }) %}
+      {% endfor %}
+      {% for name in www_landings %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': name ~ ' www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', name)
+          | replace('__TARGET__', landing_destination)
+      }) %}
+      {% set _ = vhosts.append({
+        'listen': '443 ssl',
+        'server_name': name ~ ' www.' ~ name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.landing.443.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_tls_redirect
+          | replace('__CERT__', '/etc/letsencrypt/live/' ~ name ~ '/fullchain.pem')
+          | replace('__KEY__', '/etc/letsencrypt/live/' ~ name ~ '/privkey.pem')
+          | replace('__TARGET__', landing_destination)
+      }) %}
+      {% endfor %}
+      {% for name in service_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': name,
+        'root': '/var/www/' ~ name,
+        'filename': name ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', name)
+          | replace('__TARGET__', name)
+      }) %}
+      {% endfor %}
+      {% for obj in selfsigned_www_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': obj.domain ~ ' www.' ~ obj.domain,
+        'root': '/var/www/' ~ obj.domain,
+        'filename': obj.domain ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', obj.domain)
+          | replace('__TARGET__', obj.domain)
+      }) %}
+      {% set _ = vhosts.append({
+        'listen': '443 ssl',
+        'server_name': 'www.' ~ obj.domain,
+        'root': '/var/www/' ~ obj.domain,
+        'filename': obj.domain ~ '.www.443.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_tls_redirect
+          | replace('__CERT__', obj.dir ~ '/fullchain.pem')
+          | replace('__KEY__', obj.dir ~ '/privkey.pem')
+          | replace('__TARGET__', obj.domain)
+      }) %}
+      {% endfor %}
+      {% for obj in selfsigned_service_domains %}
+      {% set _ = vhosts.append({
+        'listen': '80',
+        'server_name': obj.domain,
+        'root': '/var/www/' ~ obj.domain,
+        'filename': obj.domain ~ '.80.conf',
+        'state': 'present',
+        'extra_parameters':
+          nginx_acme_redirect
+          | replace('__DOMAIN__', obj.domain)
+          | replace('__TARGET__', obj.domain)
+      }) %}
+      {% endfor %}
+      {{ vhosts }}
+
+    prod_vhosts:
+      - listen: "443 ssl"
+        server_name: "{{ services.lldap_mesh.domain }}"
+        root: "/var/www/{{ services.lldap_mesh.domain }}"
+        filename: "{{ services.lldap_mesh.domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     {{ ansible_facts['user_dir'] }}/{{ services.lldap_mesh.name }}/certs/fullchain.pem;
+          ssl_certificate_key {{ ansible_facts['user_dir'] }}/{{ services.lldap_mesh.name }}/certs/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ services.lldap_mesh.http_port }};
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ services.control_mesh.domain }}"
+        root: "/var/www/{{ services.control_mesh.domain }}"
+        filename: "{{ services.control_mesh.domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ services.control_mesh.domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ services.control_mesh.domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ services.control_mesh.port }};
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ services.thelounge_mesh.domain }}"
+        root: "/var/www/{{ services.thelounge_mesh.domain }}"
+        filename: "{{ services.thelounge_mesh.domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ services.thelounge_mesh.domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ services.thelounge_mesh.domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ services.thelounge_mesh.port }};
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ services.sftpgo_mesh.domain }}"
+        root: "/var/www/{{ services.sftpgo_mesh.domain }}"
+        filename: "{{ services.sftpgo_mesh.domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     /etc/letsencrypt/live/{{ services.sftpgo_mesh.domain }}/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/{{ services.sftpgo_mesh.domain }}/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ services.sftpgo_mesh.http_port }};
+          }
+
+          location /webdav/ {
+            proxy_pass http://127.0.0.1:{{ services.sftpgo_mesh.webdav_port }};
+            proxy_set_header Destination $http_destination;
+          }
+
+      - listen: "443 ssl"
+        server_name: "{{ services.transmission_mesh.domain }}"
+        root: "/var/www/{{ services.transmission_mesh.domain }}"
+        filename: "{{ services.transmission_mesh.domain }}.443.conf"
+        state: "present"
+        extra_parameters: |
+          ssl_certificate     {{ ansible_facts['user_dir'] }}/{{ services.transmission_mesh.name }}/certs/fullchain.pem;
+          ssl_certificate_key {{ ansible_facts['user_dir'] }}/{{ services.transmission_mesh.name }}/certs/privkey.pem;
+
+          location / {
+            proxy_pass http://127.0.0.1:{{ services.transmission_mesh.rpc_port }};
+            proxy_pass_header X-Transmission-Session-Id;
+          }
+
+    nginx_vhosts: "{{ prod_vhosts + supplementary_vhosts }}"
+
+  roles:
+    - { role: geerlingguy.certbot, tags: certbot_certs }
+    - { role: selfsigned_cert, tags: selfsigned_certs }
+    - { role: nginx_stream_configure, tags: nginx_stream_configure }
+    - { role: geerlingguy.nginx, tags: nginx_tls }
+...

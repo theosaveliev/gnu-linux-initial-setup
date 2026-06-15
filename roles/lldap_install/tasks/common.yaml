@@ -1,0 +1,27 @@
+---
+- name: Ensure lldap directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+  loop:
+    - certs
+    - data
+
+- name: Copy lldap_config.toml
+  ansible.builtin.copy:
+    src: "lldap_config.toml/{{ service.name }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/data/lldap_config.toml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: lldap.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

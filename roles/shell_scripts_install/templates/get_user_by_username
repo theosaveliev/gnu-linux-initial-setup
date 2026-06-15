@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+curl http://localhost:{{ control.port }}/user/$1 -H "X-API-Key: {{ control.token }}"

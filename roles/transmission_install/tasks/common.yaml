@@ -1,23 +1,23 @@
 ---
 - name: Ensure transmission directories
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/{{ transmission_name }}/config"
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/config"
     state: directory
     owner: "{{ ansible_user }}"
     mode: "0700"
 
-- name: Template transmission compose file
-  ansible.builtin.template:
-    src: transmission.compose.yaml.j2
-    dest: "{{ ansible_facts['user_dir'] }}/{{ transmission_name }}/compose.yaml"
+- name: Copy settings.json
+  ansible.builtin.copy:
+    src: "transmission.settings.json/{{ service.name }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/config/settings.json"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
 
-- name: Copy settings json
-  ansible.builtin.copy:
-    src: "{{ transmission_name }}/{{ ansible_facts['hostname'] }}"
-    dest: "{{ ansible_facts['user_dir'] }}/{{ transmission_name }}/config/settings.json"
+- name: Template compose file
+  ansible.builtin.template:
+    src: transmission.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/compose.yaml"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true

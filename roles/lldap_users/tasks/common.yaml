@@ -1,0 +1,29 @@
+---
+- name: Create users
+  community.general.ldap_entry:
+    server_uri: "ldap://localhost:{{ service.ldap_port }}"
+    bind_dn: "{{ service.admin_dn }}"
+    bind_pw: "{{ service.admin_password }}"
+    dn: "uid={{ item.name }},{{ service.users_dn }}"
+    objectClass:
+      - inetOrgPerson
+      - person
+    attributes:
+      uid: "{{ item.name }}"
+      mail: "{{ item.name }}@ansible"
+    state: present
+  loop: "{{ service.users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Set passwords
+  community.general.ldap_passwd:
+    server_uri: "ldap://localhost:{{ service.ldap_port }}"
+    bind_dn: "{{ service.admin_dn }}"
+    bind_pw: "{{ service.admin_password }}"
+    dn: "uid={{ item.name }},{{ service.users_dn }}"
+    passwd: "{{ item.password }}"
+  loop: "{{ service.users }}"
+  loop_control:
+    label: "{{ item.name }}"
+...

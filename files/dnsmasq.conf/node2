@@ -1,13 +1,10 @@
 interface=br-mesh
 bind-interfaces
 
-dhcp-range=10.10.2.2,10.10.2.254,255.255.255.0,24h
+dhcp-range=10.10.2.10,10.10.2.254,255.255.255.0,24h
 dhcp-option=interface:br-mesh,option:router,10.10.2.1
 dhcp-option=interface:br-mesh,option:dns-server,10.10.2.1
 
 domain=mesh
 server=10.10.1.1
 no-resolv
-
-address=/irc2.mesh/10.10.2.1
-address=/www.irc2.mesh/10.10.2.1

@@ -1,0 +1,4 @@
+---
+- name: Run common tasks
+  ansible.builtin.import_tasks: common.yaml
+...

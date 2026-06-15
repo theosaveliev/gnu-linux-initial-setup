@@ -1,41 +1,44 @@
 ---
-- name: Ensure cert dir
+- name: Ensure cert dirs
   ansible.builtin.file:
-    path: "{{ selfsigned_cert_dir }}"
+    path: "{{ item.dir }}"
     state: directory
     owner: "{{ ansible_user }}"
     mode: "0700"
+  loop: "{{ selfsigned_certs }}"
 
-- name: Generate private key
+- name: Generate private keys
   community.crypto.openssl_privatekey:
-    path: "{{ selfsigned_cert_dir }}/privkey.pem"
-    type: "RSA"
+    path: "{{ item.dir }}/privkey.pem"
+    type: RSA
     size: 4096
     state: present
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
+  loop: "{{ selfsigned_certs }}"
 
-- name: Create CSR
+- name: Create CSRs
   community.crypto.openssl_csr:
-    path: "{{ selfsigned_cert_dir }}/cert.csr"
-    privatekey_path: "{{ selfsigned_cert_dir }}/privkey.pem"
-    common_name: "{{ selfsigned_cert_cn }}"
-    subject_alt_name: "{{ selfsigned_cert_san }}"
+    path: "{{ item.dir }}/cert.csr"
+    privatekey_path: "{{ item.dir }}/privkey.pem"
+    subject_alt_name: "{{ item.san }}"
     state: present
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
+  loop: "{{ selfsigned_certs }}"
 
-- name: Generate self-signed cert
+- name: Generate selfsigned certs
   community.crypto.x509_certificate:
-    path: "{{ selfsigned_cert_dir }}/fullchain.pem"
-    privatekey_path: "{{ selfsigned_cert_dir }}/privkey.pem"
-    csr_path: "{{ selfsigned_cert_dir }}/cert.csr"
+    path: "{{ item.dir }}/fullchain.pem"
+    privatekey_path: "{{ item.dir }}/privkey.pem"
+    csr_path: "{{ item.dir }}/cert.csr"
     provider: selfsigned
     selfsigned_not_after: "+825d"
     state: present
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
+  loop: "{{ selfsigned_certs }}"
 ...

@@ -1,31 +1,44 @@
 ---
 - name: Ensure sftpgo directories
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/config"
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/config"
     state: directory
     owner: "{{ ansible_user }}"
     mode: "0700"
 
-- name: Copy sftpgo json
+- name: Copy sftpgo.json
   ansible.builtin.copy:
-    src: "{{ sftpgo_name }}/config-{{ ansible_facts['hostname'] }}"
-    dest: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/config/sftpgo.json"
+    src: "sftpgo/{{ service.name }}/sftpgo.json"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/config/sftpgo.json"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
 
-- name: Copy backup json
+- name: Copy sftpgo-plugin-auth.json
   ansible.builtin.copy:
-    src: "{{ sftpgo_name }}/backup-{{ ansible_facts['hostname'] }}"
-    dest: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/config/backup.json"
+    src: "sftpgo/{{ service.name }}/sftpgo-plugin-auth.json"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/config/sftpgo-plugin-auth.json"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
+
+- name: Generate host keys
+  community.crypto.openssh_keypair:
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/config/{{ item.name }}"
+    type: "{{ item.type }}"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    size: "521"
+    regenerate: full_idempotence
+    force: false
+  loop:
+    - { name: id_ed25519, type: ed25519 }
+    - { name: id_ecdsa, type: ecdsa }
 
 - name: Template sftpgo compose file
   ansible.builtin.template:
     src: sftpgo.compose.yaml.j2
-    dest: "{{ ansible_facts['user_dir'] }}/{{ sftpgo_name }}/compose.yaml"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/compose.yaml"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true

@@ -1,0 +1,24 @@
+---
+- name: Ensure control directories
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Template control.env
+  ansible.builtin.template:
+    src: "control.env.j2"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/control.env"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+
+- name: Template compose file
+  ansible.builtin.template:
+    src: control.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/compose.yaml"
+    owner: "{{ ansible_user }}"
+    mode: "0600"
+    force: true
+...

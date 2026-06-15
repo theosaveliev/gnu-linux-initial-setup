@@ -1,0 +1,36 @@
+---
+services:
+  "{{ service.name }}":
+    image: "{{ images.control }}"
+    container_name: "{{ service.name }}"
+    user: "{{ docker_run_as.user }}"
+    group_add:
+      - "{{ docker_run_as.group }}"
+
+    env_file:
+      - "./control.env"
+
+    ports:
+      - "{{ service.port }}:{{ service.port }}"
+
+    networks:
+      - "{{ lldap.name }}-net"
+
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges
+
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:{{ service.port }}/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+
+    restart: always
+
+networks:
+  "{{ lldap.name }}-net":
+    external: true
+...

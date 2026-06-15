@@ -7,15 +7,18 @@ table inet firewall {
 	chain input {
 		type filter hook input priority filter; policy drop;
 		# babel
-		iifname "br-mesh" udp dport 6696 counter accept
+		# enp1s0 was added for testing
+		iifname {"enp1s0", "br-mesh"} udp dport 6696 counter accept
 
 		ct state invalid counter drop
 		ct state established,related counter accept
 		iifname "lo" counter accept
+
 		ip protocol icmp limit rate 100/second counter accept
 		ip protocol icmp counter log prefix "icmp-rate-limit: " drop
-		icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } limit rate 100/second counter accept
-		icmpv6 type { nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } counter log prefix "icmpv6-rate-limit: " drop
+		icmpv6 type { echo-request, nd-router-solicit, nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } limit rate 100/second counter accept
+		icmpv6 type { echo-request, nd-router-solicit, nd-neighbor-solicit, nd-router-advert, nd-neighbor-advert } counter log prefix "icmpv6-rate-limit: " drop
+		ip6 nexthdr icmpv6 icmpv6 type { mld-listener-query, mld-listener-report, mld-listener-done, mld2-listener-report } ip6 hoplimit 1 limit rate 100/second counter accept
 
 		# ssh
 		iifname {"enp1s0", "enp2s0", "br-mesh"} ct state new tcp dport 2200 counter accept
@@ -29,6 +32,9 @@ table inet firewall {
 		iifname "br-mesh" ct state new udp dport 53 counter accept
 		iifname "br-mesh" ct state new tcp dport 53 counter accept
 
+		# ldaps
+		iifname "enp1s0" ct state new tcp dport 42406 counter accept
+
 		iifname "enp1s0" counter log prefix "input-enp1s0-drop: " drop
 		iifname "enp2s0" counter log prefix "input-enp2s0-drop: " drop
 		iifname "br-mesh" counter log prefix "input-br-mesh-drop: " drop
@@ -40,13 +46,22 @@ table inet firewall {
 		ct state invalid counter drop
 
 		# mesh
-		iifname "br-mesh" oifname "br-mesh" meter mesh_fwd { ip saddr limit rate 1000/second } counter accept
-		iifname "br-mesh" oifname "br-mesh" counter log prefix "mesh-fwd-rate-limit: " drop
+		# enp1s0 was added for testing
+		iifname {"enp1s0", "br-mesh"} oifname {"enp1s0", "br-mesh"} meter mesh_fwd { ip saddr limit rate 1000/second } counter accept
+		iifname {"enp1s0", "br-mesh"} oifname {"enp1s0", "br-mesh"} counter log prefix "mesh-fwd-rate-limit: " drop
+        iifname {"enp1s0", "br-mesh"} oifname {"enp1s0", "br-mesh"} meter mesh_fwd6 { ip6 saddr limit rate 1000/second } counter accept
+        iifname {"enp1s0", "br-mesh"} oifname {"enp1s0", "br-mesh"} counter log prefix "mesh-fwd6-rate-limit: " drop
 
         ct state established,related counter accept
 
 		# docker
 		iifname != {"enp1s0", "enp2s0", "br-mesh"} ip saddr 172.16.0.0/12 ct state new counter accept
+
+		# sftp
+		iifname "enp1s0" ip daddr 172.16.0.0/12 ct state new ct original proto-dst 61952 counter accept
+
+		# transmission
+		iifname {"enp1s0", "br-mesh"} ip daddr 172.16.0.0/12 ct state new ct original proto-dst 18976 counter accept
 
 		iifname "enp1s0" ct state new counter log prefix "forward-enp1s0-drop: " drop
 		iifname "enp2s0" ct state new counter log prefix "forward-enp2s0-drop: " drop

@@ -1,7 +1,14 @@
 ---
+- name: Install curl
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    name: curl
+
 - name: Ensure shell scripts directory
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/{{ shell_scripts_name }}"
+    path: "{{ ansible_facts['user_dir'] }}/{{ dir_name }}"
     state: directory
     owner: "{{ ansible_user }}"
     mode: "0700"
@@ -9,15 +16,26 @@
 - name: Template shell scripts
   ansible.builtin.template:
     src: "{{ item }}"
-    dest: "{{ ansible_facts['user_dir'] }}/{{ shell_scripts_name }}/{{ item }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ dir_name }}/{{ item }}"
     owner: "{{ ansible_user }}"
     mode: "0700"
     force: true
   loop:
-    - whos_pending
-    - create_sftpgo_users
-    - create_thelounge_users
-    - notify_users
-    - set_time
+    - account_ready_sftpgo
+    - account_ready_thelounge
+    - add_user_to_group
+    - create_group
+    - delete_group
+    - delete_user
+    - get_users_by_telegram_id
+    - get_user_by_username
+    - get_users_by_full_name
+    - get_users_by_group
+    - list_groups
+    - list_users
+    - notify_user
+    - register_user
+    - remove_user_from_group
     - reset_sftpgo_volumes
+    - set_time
 ...

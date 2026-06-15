@@ -1,0 +1,67 @@
+---
+services:
+  lldap_mesh:
+    name: lldap-mesh
+    http_port: "58521"
+    ldap_port: "11333"
+    ldaps_port: "42406"
+    domain: lldap.mesh
+    admin_username: "admin"
+    admin_dn: "uid=admin,ou=people,dc=lldap,dc=mesh"
+    admin_password: "redacted1"
+    users_dn: "ou=people,dc=lldap,dc=mesh"
+    groups_dn: "ou=groups,dc=lldap,dc=mesh"
+    groups:
+      - thelounge
+      - sftpgo
+    users:
+      - { name: thelounge, group: lldap_strict_readonly, password: "redacted2" }
+      - { name: sftpgo, group: lldap_strict_readonly, password: "redacted3" }
+
+  control_mesh:
+    name: control-mesh
+    port: "33246"
+    listen: "0.0.0.0"
+    domain: control-mesh.example.com
+    token: "redacted4"
+
+  bot_mesh:
+    name: bot-mesh
+    port: "48200"
+    listen: "0.0.0.0"
+    domain: bot-mesh.example.com
+    token: "redacted5"
+    session_dir: data
+    telegram_api_id: "redacted6"
+    telegram_api_hash: "redacted7"
+    telegram_token: "redacted8"
+
+  ngircd_mesh:
+    name: ngircd-mesh
+    port: "13308"
+    tls_port: "50746"
+    domain: irc.mesh
+
+  thelounge_mesh:
+    name: thelounge-mesh
+    port: "30970"
+    domain: irc.example.com
+
+  sftpgo_mesh:
+    name: sftpgo-mesh
+    volume_size: "4g"
+    sftp_port: "61952"
+    webdav_port: "51701"
+    http_port: "33087"
+    api_port: "30541"
+    data_dir: "/srv/sftpgo"
+    domain: files.example.com
+    admin_username: admin
+    admin_password: "redacted9"
+
+  transmission_mesh:
+    name: transmission-mesh
+    rpc_port: "58397"
+    peer_port: "18976"
+    domain: transmission.mesh
+...

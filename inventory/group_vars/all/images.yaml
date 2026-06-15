@@ -1,0 +1,32 @@
+---
+images:
+  # lldap_install
+  # https://hub.docker.com/r/lldap/lldap/tags
+  lldap: "lldap/lldap:v0.6.3-alpine-rootless"
+
+  # control_install
+  # https://hub.docker.com/r/nett/tta-control/tags
+  control: "nett/tta-control:0.4.0"
+
+  # telegram_bot_install
+  # https://hub.docker.com/r/nett/tta-telegram-bot/tags
+  telegram_bot: "nett/tta-telegram-bot:0.4.0"
+
+  # ngircd_install
+  # https://hub.docker.com/r/linuxserver/ngircd/tags
+  ngircd: "linuxserver/ngircd:version-27-r1"
+
+  # thelounge_install
+  # https://hub.docker.com/r/linuxserver/thelounge/tags
+  thelounge: "linuxserver/thelounge:4.5.0"
+
+  # https://hub.docker.com/r/drakkan/sftpgo/tags
+  sftpgo: "drakkan/sftpgo:v2.7.3-plugins"
+
+  # https://hub.docker.com/_/mediawiki/tags
+  mediawiki: "mediawiki:1.45.3-fpm"
+
+  # transmission_install
+  # https://hub.docker.com/r/linuxserver/transmission/tags
+  transmission: "linuxserver/transmission:4.1.2"
+...

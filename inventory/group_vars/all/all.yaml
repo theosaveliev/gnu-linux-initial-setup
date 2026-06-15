@@ -5,50 +5,5 @@ docker_run_as:
   user: "1000"
   group: "1000"
 
-# linux-system-roles.journald
-journald_persistent: true
-journald_max_disk_size: "4096"
-journald_per_user: true
-journald_sync_interval: 1
-journald_keep_free: "1024"
-
-# devsec.hardening.ssh_hardening
-ssh_server_ports: ["2200"]
-ssh_permit_tunnel: "yes"
-ssh_allow_tcp_forwarding: "yes"
-sftp_enabled: true
-
-# devsec.hardening.os_hardening
-sysctl_overwrite:
-  net.ipv4.ip_forward: 1
-
-# ngircd_install, thelounge_install, filebrowser_install, tta_control_install, tta_telegram_bot_install
 docker_cli: /usr/bin/docker
-
-# ngircd_install
-# https://hub.docker.com/r/linuxserver/ngircd/tags
-ngircd_image: "linuxserver/ngircd:version-27-r1"
-
-# thelounge_install
-# https://hub.docker.com/r/linuxserver/thelounge/tags
-thelounge_image: "linuxserver/thelounge:4.5.0"
-
-# filebrowser_install
-# https://hub.docker.com/r/filebrowser/filebrowser/tags
-filebrowser_image: "filebrowser/filebrowser:v2.63.5"
-
-# transmission_install
-# https://hub.docker.com/r/linuxserver/transmission/tags
-transmission_image: "linuxserver/transmission:4.1.1"
-
-# tta_control_install
-# https://hub.docker.com/r/nett/tta-control/tags
-tta_control_image: "nett/tta-control:0.2.5"
-
-# tta_telegram_bot_install
-# https://hub.docker.com/r/nett/tta-telegram-bot/tags
-tta_telegram_bot_image: "nett/tta-telegram-bot:0.2.5"
-
-# https://hub.docker.com/_/mediawiki/tags
-mediawiki_image: "mediawiki:1.45.3"
 ...

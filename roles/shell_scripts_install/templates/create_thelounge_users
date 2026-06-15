@@ -1,7 +1,0 @@
-#!/usr/bin/bash
-
-curl https://{{ tta_control_domain }}/create_thelounge_user_files -H "Content-Type: application/json" -d '{"token": "{{ tta_control_token }}"}'
-
-{% if thelounge_name is defined %}
-mv {{ ansible_facts['user_dir'] }}/{{ tta_control_name }}/{{ tta_thelounge_users_dir }}/* {{ ansible_facts['user_dir'] }}/{{ thelounge_name }}/config/users/
-{% endif %}

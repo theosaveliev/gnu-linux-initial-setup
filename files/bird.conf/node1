@@ -79,6 +79,8 @@ protocol kernel {
 }
 
 protocol babel babel_mesh {
+	randomize router id on;
+	
 	ipv4 {
 		import all;
 		export filter {
@@ -92,7 +94,19 @@ protocol babel babel_mesh {
 		type wireless;
 		port 6696;
 		authentication mac;
-		password "redacted1" {
+		password "redacted10" {
+			algorithm hmac sha256;
+		};
+		hello interval 4s;
+		update interval 20s;
+	};
+
+	# enp1s0 was added for testing
+	interface "enp1s0" {
+		type wireless;
+		port 6696;
+		authentication mac;
+		password "redacted10" {
 			algorithm hmac sha256;
 		};
 		hello interval 4s;
@@ -167,7 +181,7 @@ protocol babel babel_mesh {
 #}
 
 # Define simple filter as an example for BGP import filter
-# See https://gitlab.labs.nic.cz/labs/bird/wikis/BGP_filtering for more examples
+# See https://gitlab.mesh.nic.cz/mesh/bird/wikis/BGP_filtering for more examples
 # filter rt_import
 # {
 #	if bgp_path.first != 64496 then accept;

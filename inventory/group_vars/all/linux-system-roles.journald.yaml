@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: MIT
+---
+journald_persistent: true
+journald_max_disk_size: "4096"
+journald_max_files: 0
+journald_max_file_size: 0
+journald_per_user: true
+journald_compression: true
+journald_sync_interval: 1
+journald_forward_to_syslog: false
+journald_rate_limit_interval_sec: 30
+journald_rate_limit_burst: 10000
+journald_keep_free: "1024"
+journald_max_retention: 0
+...

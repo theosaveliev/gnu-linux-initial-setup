@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-{% if transmission_name is defined %}
-sudo systemctl stop {{ transmission_name }}
+{% if transmission is defined %}
+sudo systemctl stop {{ transmission.name }}
 {% endif %}
 
-{% if sftpgo_name is defined %}
-sudo systemctl stop {{ sftpgo_name }}
-docker volume rm "{{ sftpgo_name }}_{{ sftpgo_name }}-data"
+{% if sftpgo is defined %}
+sudo systemctl stop {{ sftpgo.name }}
+docker volume rm "{{ sftpgo.name }}_{{ sftpgo.name }}-data"
 docker volume prune --force
 {% endif %}

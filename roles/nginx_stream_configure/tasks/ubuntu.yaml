@@ -1,0 +1,15 @@
+---
+- name: Create nginx stream config
+  ansible.builtin.template:
+    src: nginx_streams.conf.j2
+    dest: "/etc/nginx/stream.d/{{ item.filename }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop: "{{ nginx_streams }}"
+  notify: NginxRestart
+
+- name: Validate nginx config
+  ansible.builtin.command: nginx -t
+  changed_when: false
+...

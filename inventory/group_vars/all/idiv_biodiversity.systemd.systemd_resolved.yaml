@@ -1,0 +1,14 @@
+---
+systemd_resolved_servers: ["172.16.200.200"]
+systemd_resolved_dnssec: false
+systemd_resolved_dns_over_tls: false
+systemd_resolved_multicast_dns: false
+systemd_resolved_llmnr: false
+systemd_resolved_cache: false
+systemd_resolved_cache_from_localhost: false
+systemd_resolved_dns_stub_listener: false
+systemd_resolved_dns_stub_listener_extra: ''
+systemd_resolved_read_etc_hosts: false
+systemd_resolved_resolve_unicast_single_label: false
+systemd_resolved_stale_retention_sec: 0
+...

@@ -1,7 +1,7 @@
 ---
 - name: Add users
   community.docker.docker_container_exec:
-    container: "{{ thelounge_name }}"
+    container: "{{ service.name }}"
     argv:
       - thelounge
       - add

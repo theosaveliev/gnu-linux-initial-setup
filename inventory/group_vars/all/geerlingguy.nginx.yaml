@@ -23,7 +23,7 @@ nginx_vhost_template: "vhost.j2"
 
 nginx_worker_processes: "{{ ansible_facts['processor_vcpus'] | default(ansible_facts['processor_count']) }}"
 nginx_worker_connections: "1024"
-nginx_multi_accept: "on"
+nginx_multi_accept: "off"
 
 nginx_error_log: "syslog:server=unix:/dev/log info"
 nginx_access_log: "syslog:server=unix:/dev/log main"
@@ -35,15 +35,25 @@ nginx_tcp_nodelay: "on"
 nginx_keepalive_timeout: "75"
 nginx_keepalive_requests: "600"
 
-nginx_server_tokens: "on"
+nginx_server_tokens: "off"
 
-nginx_client_max_body_size: "11M"
+nginx_client_max_body_size: "64m"
 
 nginx_server_names_hash_bucket_size: "64"
 
 nginx_proxy_cache_path: ""
 
-nginx_extra_conf_options: ""
+nginx_extra_conf_options: |
+  load_module modules/ngx_stream_module.so;
+
+  stream {
+    include /etc/nginx/stream.d/*.conf;
+  }
+
+# Example extra main options, used within the main nginx's context:
+#   nginx_extra_conf_options: |
+#     env VARIABLE;
+#     include /etc/nginx/main.d/*.conf;
 
 # yamllint disable rule:line-length
 nginx_extra_http_options: |
@@ -51,16 +61,60 @@ nginx_extra_http_options: |
   ssl_ecdh_curve X25519:prime256v1:secp384r1;
   ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305;
   ssl_prefer_server_ciphers off;
+  proxy_http_version 1.1;
+  proxy_request_buffering off;
+  proxy_buffering off;
+  proxy_max_temp_file_size 0;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  proxy_set_header Connection "keep-alive";
+  proxy_socket_keepalive on;
+  proxy_connect_timeout 60s;
+  proxy_send_timeout 300s;
+  proxy_read_timeout 86400s;
 # yamllint enable rule:line-length
+
+# nginx_extra_http_options: ""
+# Example extra http options, printed inside the main server http config:
+#    nginx_extra_http_options: |
+#      proxy_buffering    off;
+#      proxy_set_header   X-Real-IP $remote_addr;
+#      proxy_set_header   X-Scheme $scheme;
+#      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+#      proxy_set_header   Host $http_host;
 
 nginx_remove_default_vhost: true
 
 # Listen on IPv6 (default: true)
 nginx_listen_ipv6: true
 
-# nginx_vhosts: []
+nginx_vhosts: []
+# Example vhost below, showing all available options:
+# - listen: "80" # default: "80"
+#   server_name: "example.com" # default: N/A
+#   root: "/var/www/example.com" # default: N/A
+#   index: "index.html index.htm" # default: "index.html index.htm"
+#   filename: "example.com.conf" # Can be used to set the vhost filename.
+#
+#   # Properties that are only added if defined:
+#   server_name_redirect: "www.example.com" # default: N/A
+#   error_page: ""
+#   access_log: ""
+#   error_log: ""
+#   extra_parameters: "" # Can be used to add extra config blocks (multiline).
+#   template: "" # Can be used to override the `nginx_vhost_template` per host.
+#   state: "absent" # To remove the vhost configuration.
 
-# nginx_upstreams: []
+nginx_upstreams: []
+# - name: myapp1
+#   strategy: "ip_hash" # "least_conn", etc.
+#   keepalive: 16 # optional
+#   servers:
+#     - "srv1.example.com"
+#     - "srv2.example.com weight=3"
+#     - "srv3.example.com"
 
 nginx_log_format: |-
   '$remote_addr - $remote_user [$time_local] "$request" '

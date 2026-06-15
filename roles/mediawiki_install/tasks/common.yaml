@@ -1,34 +1,34 @@
 ---
 - name: Ensure mediawiki directories
   ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/{{ mediawiki_name }}/www/{{ item }}"
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/www/{{ item }}"
     state: directory
     owner: "{{ ansible_user }}"
-    mode: "0700"
+    mode: "0755"
   loop:
     - data
     - images
 
-- name: Template compose file
-  ansible.builtin.template:
-    src: mediawiki.compose.yaml.j2
-    dest: "{{ ansible_facts['user_dir'] }}/{{ mediawiki_name }}/compose.yaml"
+- name: Fix mediawiki directory permissions
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/www/images"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0755"
+    recurse: true
+
+- name: Copy localsettings.php
+  ansible.builtin.copy:
+    src: "mediawiki.localsettings.php/{{ service.name }}"
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/www/LocalSettings.php"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true
 
-- name: Copy htaccess
-  ansible.builtin.copy:
-    src: mediawiki.htaccess
-    dest: "{{ ansible_facts['user_dir'] }}/{{ mediawiki_name }}/www/images/.htaccess"
-    owner: "{{ ansible_user }}"
-    mode: "0644"
-    force: true
-
-- name: Copy localsettings php
-  ansible.builtin.copy:
-    src: "{{ mediawiki_name }}/{{ ansible_facts['hostname'] }}"
-    dest: "{{ ansible_facts['user_dir'] }}/{{ mediawiki_name }}/www/LocalSettings.php"
+- name: Template compose file
+  ansible.builtin.template:
+    src: mediawiki.compose.yaml.j2
+    dest: "{{ ansible_facts['user_dir'] }}/{{ service.name }}/compose.yaml"
     owner: "{{ ansible_user }}"
     mode: "0600"
     force: true

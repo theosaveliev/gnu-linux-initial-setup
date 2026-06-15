@@ -5,15 +5,19 @@
     update_cache: true
     cache_valid_time: 3600
     name:
-      - iproute2
-      - net-tools
-      - bridge-utils
       - bind9-dnsutils
-      - isc-dhcp-client
-      - inetutils-traceroute
-      - tcpdump
-      - iftop
-      - vim
-      - git
+      - bridge-utils
       - curl
+      - dnsmasq-utils
+      - git
+      - iftop
+      - inetutils-traceroute
+      - iproute2
+      - irssi
+      - isc-dhcp-client
+      - ldap-utils
+      - net-tools
+      - sqlite3
+      - tcpdump
+      - vim
 ...

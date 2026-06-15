@@ -1,0 +1,85 @@
+---
+- name: Set up context as unprivileged user
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: false
+  gather_facts: true
+
+- name: Install services
+  hosts: "{{ target_hosts | default('node1') }}"
+  become: true
+  gather_facts: false
+  roles:
+    - role: lldap_install
+      tags: [lldap_install]
+      vars:
+        service: "{{ services.lldap_mesh }}"
+
+    - role: lldap_groups
+      tags: [lldap_groups]
+      vars:
+        service: "{{ services.lldap_mesh }}"
+
+    - role: lldap_users
+      tags: [lldap_users]
+      vars:
+        service: "{{ services.lldap_mesh }}"
+
+    - role: control_install
+      tags: [control_install]
+      vars:
+        service: "{{ services.control_mesh }}"
+        lldap: "{{ services.lldap_mesh }}"
+        bot: "{{ services.bot_mesh }}"
+
+    - role: lldap_memberships
+      tags: [lldap_memberships]
+      vars:
+        control: "{{ services.control_mesh }}"
+        lldap: "{{ services.lldap_mesh }}"
+
+    - role: shell_scripts_install
+      tags: [shell_scripts_install]
+      vars:
+        dir_name: scripts-mesh
+        control: "{{ services.control_mesh }}"
+        ngircd: "{{ services.ngircd_mesh }}"
+        thelounge: "{{ services.thelounge_mesh }}"
+        sftpgo: "{{ services.sftpgo_mesh }}"
+        transmission: "{{ services.transmission_mesh }}"
+
+    - role: selfsigned_cert
+      tags: [selfsigned_cert]
+      vars:
+        selfsigned_certs:
+          - dir: "{{ ansible_facts['user_dir'] }}/{{ services.ngircd_mesh.name }}/certs"
+            san: ["DNS:{{ services.ngircd_mesh.domain }}"]
+
+    - role: ngircd_install
+      tags: [ngircd_install]
+      vars:
+        service: "{{ services.ngircd_mesh }}"
+
+    - role: thelounge_install
+      tags: [thelounge_install]
+      vars:
+        service: "{{ services.thelounge_mesh }}"
+        lldap: "{{ services.lldap_mesh }}"
+        ngircd: "{{ services.ngircd_mesh }}"
+
+    - role: thelounge_themes
+      tags: [thelounge_themes]
+      vars:
+        service: "{{ services.thelounge_mesh }}"
+
+    - role: sftpgo_install
+      tags: [sftpgo_install]
+      vars:
+        service: "{{ services.sftpgo_mesh }}"
+        lldap: "{{ services.lldap_mesh }}"
+
+    - role: transmission_install
+      tags: [transmission_install]
+      vars:
+        service: "{{ services.transmission_mesh }}"
+        sftpgo: "{{ services.sftpgo_mesh }}"
+...

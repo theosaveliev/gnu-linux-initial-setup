@@ -1,9 +1,0 @@
-#!/usr/bin/bash
-
-{% if thelounge_name is defined %}
-curl https://{{ tta_control_domain }}/notify_thelounge_users -H "Content-Type: application/json" -d '{"token": "{{ tta_control_token }}"}'
-{% endif %}
-
-{% if sftpgo_name is defined %}
-curl https://{{ tta_control_domain }}/notify_sftpgo_users -H "Content-Type: application/json" -d '{"token": "{{ tta_control_token }}"}'
-{% endif %}

@@ -6,7 +6,7 @@
     owner: www-data
     group: www-data
     mode: "0770"
-  loop: "{{ webroot_domain }}"
+  loop: "{{ webroot_domains }}"
 
 - name: Copy stub page
   ansible.builtin.copy:
@@ -16,5 +16,5 @@
     group: www-data
     mode: "0640"
     force: true
-  loop: "{{ webroot_domain }}"
+  loop: "{{ webroot_domains }}"
 ...
