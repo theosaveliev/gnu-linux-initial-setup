@@ -202,8 +202,8 @@
     }
   },
   "data_provider": {
-    "driver": "memory",
-    "name": "sftpgo.db",
+    "driver": "sqlite",
+    "name": "/var/lib/sftpgo/sftpgo.sqlite",
     "host": "",
     "port": 0,
     "username": "",
