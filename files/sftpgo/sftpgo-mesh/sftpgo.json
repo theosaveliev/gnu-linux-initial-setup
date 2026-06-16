@@ -7,7 +7,7 @@
       "execute_sync": [],
       "hook": ""
     },
-    "setstat_mode": 0,
+    "setstat_mode": 1,
     "rename_mode": 0,
     "resume_max_size": 0,
     "secret_min_entropy": 100,
@@ -37,7 +37,7 @@
       "score_invalid": 2,
       "score_valid": 1,
       "score_limit_exceeded": 3,
-      "score_no_auth": 0,
+      "score_no_auth": 1,
       "observation_time": 30,
       "entries_soft_limit": 100,
       "entries_hard_limit": 150,
@@ -52,12 +52,7 @@
         "period": 1000,
         "burst": 50,
         "type": 2,
-        "protocols": [
-          "SSH",
-          "FTP",
-          "DAV",
-          "HTTP"
-        ],
+        "protocols": ["SSH", "FTP", "DAV", "HTTP"],
         "generate_defender_events": true,
         "entries_soft_limit": 100,
         "entries_hard_limit": 150
@@ -94,11 +89,28 @@
     "max_auth_tries": 10,
     "host_keys": ["id_ecdsa", "id_ed25519"],
     "host_certificates": [],
-    "host_key_algorithms": ["ecdsa-sha2-nistp256", "ecdsa-sha2-nistp384", "ecdsa-sha2-nistp521", "ssh-ed25519"],
-    "kex_algorithms": ["mlkem768x25519-sha256", "curve25519-sha256", "curve25519-sha256@libssh.org", "ecdh-sha2-nistp521"],
+    "host_key_algorithms": [
+      "ecdsa-sha2-nistp256",
+      "ecdsa-sha2-nistp384",
+      "ecdsa-sha2-nistp521",
+      "ssh-ed25519"
+    ],
+    "kex_algorithms": [
+      "mlkem768x25519-sha256",
+      "curve25519-sha256",
+      "curve25519-sha256@libssh.org",
+      "ecdh-sha2-nistp521"
+    ],
     "ciphers": ["chacha20-poly1305@openssh.com", "aes256-gcm@openssh.com"],
     "macs": ["hmac-sha2-512-etm@openssh.com", "hmac-sha2-256-etm@openssh.com"],
-    "public_key_algorithms": [],
+    "public_key_algorithms": [
+      "ssh-ed25519",
+      "sk-ssh-ed25519@openssh.com",
+      "sk-ecdsa-sha2-nistp256@openssh.com",
+      "ecdsa-sha2-nistp256",
+      "ecdsa-sha2-nistp384",
+      "ecdsa-sha2-nistp521"
+    ],
     "trusted_user_ca_keys": [],
     "revoked_user_certs_file": "",
     "opkssh_path": "",
@@ -217,7 +229,7 @@
     "client_key": "",
     "connection_string": "",
     "sql_tables_prefix": "",
-    "track_quota": 2,
+    "track_quota": 0,
     "delayed_quota_update": 0,
     "pool_size": 0,
     "users_base_dir": "/srv/sftpgo/users",
@@ -288,20 +300,14 @@
         "hide_login_url": 0,
         "render_openapi": false,
         "base_url": "",
-        "languages": [
-          "en"
-        ],
+        "languages": ["en"],
         "oidc": {
           "client_id": "",
           "client_secret": "",
           "client_secret_file": "",
           "config_url": "",
           "redirect_base_url": "",
-          "scopes": [
-            "openid",
-            "profile",
-            "email"
-          ],
+          "scopes": ["openid", "profile", "email"],
           "username_field": "",
           "role_field": "",
           "implicit_roles": false,
@@ -310,7 +316,7 @@
           "debug": false
         },
         "security": {
-          "enabled": true,
+          "enabled": false,
           "allowed_hosts": [],
           "allowed_hosts_are_regex": false,
           "hosts_proxy_headers": [],
@@ -374,20 +380,14 @@
         "hide_login_url": 0,
         "render_openapi": true,
         "base_url": "",
-        "languages": [
-          "en"
-        ],
+        "languages": ["en"],
         "oidc": {
           "client_id": "",
           "client_secret": "",
           "client_secret_file": "",
           "config_url": "",
           "redirect_base_url": "",
-          "scopes": [
-            "openid",
-            "profile",
-            "email"
-          ],
+          "scopes": ["openid", "profile", "email"],
           "username_field": "",
           "role_field": "",
           "implicit_roles": false,
@@ -396,7 +396,7 @@
           "debug": false
         },
         "security": {
-          "enabled": true,
+          "enabled": false,
           "allowed_hosts": [],
           "allowed_hosts_are_regex": false,
           "hosts_proxy_headers": [],
@@ -537,7 +537,11 @@
     {
       "type": "auth",
       "cmd": "/usr/local/bin/sftpgo-plugin-auth",
-      "args": ["serve", "--config-file", "/var/lib/sftpgo/sftpgo-plugin-auth.json"],
+      "args": [
+        "serve",
+        "--config-file",
+        "/var/lib/sftpgo/sftpgo-plugin-auth.json"
+      ],
       "sha256sum": "",
       "auto_mtls": false,
       "auth_options": {
