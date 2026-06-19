@@ -83,7 +83,7 @@
       {
         "port": 61952,
         "address": "",
-        "apply_proxy_config": true
+        "apply_proxy_config": false
       }
     ],
     "max_auth_tries": 10,

@@ -19,7 +19,7 @@
             "require_groups": false,
             "sftpgo_user_requirements": 0,
             "base_dir": "",
-            "cache_time": 0
+            "cache_time": 300
         }
     ]
 }
