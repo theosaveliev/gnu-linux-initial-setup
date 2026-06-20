@@ -1,7 +1,7 @@
 {
   "common": {
     "idle_timeout": 30,
-    "upload_mode": 1,
+    "upload_mode": 0,
     "actions": {
       "execute_on": [],
       "execute_sync": [],
